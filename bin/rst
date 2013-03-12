@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+
+require_relative '../rst'
+require_relative '../lib/rst'
+include RST
+
+
+# Run rst from commandline
+cmd = RstCommand.new(ARGV)
+puts cmd.run
