@@ -30,4 +30,14 @@ describe 'Command-line arguments' do
     got.should == File.read(File.join(DOCS,'examples.md')).strip
   end
 
+  it 'should print a little calendar' do
+    got = run_shell('bin/rst calendar --from=1964-08-31 --to=1964-09-02')
+    got.should == <<-EOT
+      Mon, Aug 31 1964
+      Tue, Sep 01 1964
+      Wed, Sep 02 1964
+    EOT
+    .gsub(/^\s*/, '').strip
+  end
+
 end

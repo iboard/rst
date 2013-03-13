@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 
-require_relative '../rst'
+require File.expand_path('../../rst', __FILE__)
 require_relative '../lib/rst'
 include RST
 

@@ -1,14 +1,13 @@
 Gem::Specification.new do |s|
   s.name        = 'rst'
   s.version     = '0.0.0'
-  s.date        = '2013-03-12'
+  s.date        = '2013-03-13'
   s.summary     = "Ruby Shell Tools"
   s.description = "Tools for the unix shell"
   s.authors     = ["Andi Altendorfer"]
   s.email       = 'andreas@altendorfer.at'
-  s.files       = Dir['lib/**/*.rb'] + Dir['bin/*']
+  s.files       = Dir['./*rb'] + Dir['lib/**/*.rb'] + Dir['bin/*']
   s.bindir      = 'bin'
-  s.executables = ['rst']
   s.default_executable = 'rst'
   s.executables << 'rst'
   #s.add_dependency('somegem')

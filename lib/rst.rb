@@ -1,3 +1,6 @@
+require 'optparse'
+require 'calendar/calendar'
+
 # Ruby Shell Tools main namespace RST
 #
 # @author Tue Mar 12 19:24:52 2013 <andreas@altendorfer.at>
@@ -5,7 +8,7 @@
 # @see http://altendorfer.at
 module RST
 
-  require 'optparse'
+  include Calendar
 
   # Run commands given as ARGV with options
   class RstCommand
@@ -23,7 +26,9 @@ module RST
     # output with CR
     # @return [String]
     def run
-      [run_options, run_arguments].reject{|l| l.strip == '' }.join("\n")
+      [run_options, run_arguments]
+      .compact
+      .reject{|l| l.strip == '' }.join("\n")
     end
 
     private
@@ -49,11 +54,19 @@ module RST
           puts opts
         end
 
+        opts.on('-f', '--from DATE', String, 'Set from-date') do |from|
+          @options[:from] = from
+        end
+
+        opts.on('-t', '--to DATE', String, 'Set to-date') do |to|
+          @options[:to] = to
+        end
+
         opts.separator ''
         opts.separator 'Conmands:
-          nil ... no command. Interpret options only (useful in combination with -v)
-          ls .... list directory and files'.gsub(/^\s+/,'    ')
-        
+          nil ..... no command. Interpret options only (useful in combination with -v)
+          ls ...... list directory and files
+          calendar  print a calendar --from --to'.gsub(/^\s+/,'    ')
 
       end
       .parse!
@@ -70,7 +83,7 @@ module RST
         when 'examples'; File.read(File.join(DOCS,'examples.md')).strip;
         when 'verbose' ; print_arguments;
         else
-          "unknown option #{k.to_s}: #{v.inspect}"
+          #noop ignore unknown options likely it's a param for an argument
         end
       end
       .join("\n")
@@ -86,6 +99,7 @@ module RST
       case command
       when nil, 'nil', 'null'; '';
       when 'ls'              ; directory_listing(_files);
+      when 'cal', 'calendar' ; print_calendar;
       else
         "unknown command '#{cmd.inspect}' - try --help"
       end
@@ -107,6 +121,12 @@ module RST
         Dir[f].join("\t")
       end
       .uniq.join("\t")
+    end
+
+    # Output one line per day between start and end-date
+    def print_calendar
+      cal = Calendar::Calendar.new(options[:from], options[:to])
+      puts cal.list_days
     end
 
   end

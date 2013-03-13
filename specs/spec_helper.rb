@@ -1,6 +1,6 @@
 require 'tempfile'
-require_relative '../lib/rst'
 require_relative '../rst'
+include RST
 
 def run_shell(cmd)
   _rc = ""
