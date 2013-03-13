@@ -2,13 +2,19 @@
 require './rst'
 require './lib/rst'
 
+options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
+
 # Application Tasks
 task :default => 'test'
 
 desc "Run specs"
 task :test do
-  options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
   system "rspec -f d #{options} specs"
+end
+
+desc "Run module-specs only"
+task :modules do
+  system "rspec -f d #{options} specs/modules"
 end
 
 desc "Build GEM"

@@ -32,12 +32,9 @@ describe 'Command-line arguments' do
 
   it 'should print a little calendar' do
     got = run_shell('bin/rst calendar --from=1964-08-31 --to=1964-09-02')
-    got.should == <<-EOT
-      Mon, Aug 31 1964
-      Tue, Sep 01 1964
-      Wed, Sep 02 1964
-    EOT
-    .gsub(/^\s*/, '').strip
+    got.should =~ /Mon, Aug 31 1964/
+    got.should =~ /Tue, Sep 01 1964/
+    got.should =~ /Wed, Sep 02 1964/
   end
 
 end

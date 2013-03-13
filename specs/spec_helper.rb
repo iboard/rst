@@ -1,5 +1,6 @@
 require 'tempfile'
 require_relative '../rst'
+require 'calendar/eventable'
 include RST
 
 def run_shell(cmd)

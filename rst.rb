@@ -9,4 +9,5 @@ module RST
 
   require 'fixnum'
   require 'calendar'
+  require 'eventable'
 end

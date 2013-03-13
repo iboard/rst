@@ -11,13 +11,19 @@ module RST
     # Handle a range from :start_date to :end_date
     class Calendar
     
-      attr_reader :start_date, :end_date
+      attr_reader :start_date, :end_date, :events
     
       # @param [Date|Time|String] _start The date where the calendar starts
       # @param [Date|Time|String] _end   The date where the calendar ends
-      def initialize(_start='today',_end='today')
+      def initialize(_start='today',_end='today',_events=[])
         @start_date = parse_date_param(_start)
         @end_date   = parse_date_param(_end)
+        @events     = _events
+      end
+
+      # Add Eventables to the calendar
+      def <<(add)
+        events << add 
       end
   
       # Calculate the span between start and end in secods
@@ -30,10 +36,11 @@ module RST
       # @return [String]
       def list_days
         (start_date..end_date).to_a.map do |date|
-          date.strftime('%a, %b %d %Y')
+          [date.strftime('%a, %b %d %Y'), events_on(date)].compact.join(": ")
         end
         .join("\n")
       end
+      
   
       private
   
@@ -45,6 +52,11 @@ module RST
         return param if param.is_a?(Date) || param.is_a?(::Time)
         return Date.today if param =~ /today/i
         Date.parse(param)
+      end
+
+      # List Event-headlines for a given date
+      def events_on(date)
+        events.select { |event| event.event_date == date }.map(&:event_headline).join(' + ')
       end
   
     end
