@@ -1,5 +1,4 @@
 require 'optparse'
-require 'calendar/calendar'
 
 # Ruby Shell Tools main namespace RST
 #
@@ -7,8 +6,6 @@ require 'calendar/calendar'
 # @see https://github.com/iboard/rst
 # @see http://altendorfer.at
 module RST
-
-  include Calendar
 
   # Run commands given as ARGV with options
   class RstCommand

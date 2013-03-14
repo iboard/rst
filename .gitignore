@@ -1,3 +1,5 @@
 .rspec
 doc/
+data/
+NERD_*
 rst-0*gem

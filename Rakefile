@@ -1,6 +1,5 @@
 #!/usr/bin/env rake
-require './rst'
-require './lib/rst'
+require_relative 'lib/load'
 
 options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
 
