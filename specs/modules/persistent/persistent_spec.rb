@@ -3,7 +3,19 @@ require 'ostruct'
 
 describe Persistent do
 
+  describe 'Abstract Store' do
+
+    it 'should raise an exception if setup_store is not overwritten' do
+      expect { s = Persistent::Store.new }.to raise_error( AbstractMethodCallError )
+    end
+
+  end
+
   describe 'MemoryStore' do
+
+    class Something < Struct.new :name
+      include Persistent
+    end
 
     before do
       @store = Persistent::MemoryStore.new
@@ -16,18 +28,6 @@ describe Persistent do
     it 'should be able to add and retrieve from store' do
       @store << OpenStruct.new(name:'Frank')
       @store.first.name.should == 'Frank'
-    end
-
-  end
-
-  describe 'injects store-functions to a class' do
-
-    before do
-      @store = Persistent::MemoryStore.new
-    end
-
-    class Something < Struct.new :name
-      include Persistent
     end
 
     it 'should have store functions' do
@@ -53,9 +53,17 @@ describe Persistent do
       reloaded.name.should == 'Completely'
     end
 
+    it 'should find more than one object with find' do
+      o1 = Something.new 'Object One'
+      o2 = Something.new 'Object Two'
+      @store << o1
+      @store << o2
+      @store.find(o1.id,o2.id).should == [o1,o2]
+    end
+
   end
 
-  describe 'store it really persistent' do
+  describe 'DiskStore' do
      
     before do
       @store = Persistent::DiskStore.new

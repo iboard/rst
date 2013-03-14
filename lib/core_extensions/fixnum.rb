@@ -32,43 +32,43 @@ class Numeric
 
   #:nodoc:
   def years
-    (self * YEAR).round
+    (self * YEAR).to_f
   end
   alias :year :years
 
   #:nodoc:
   def months
-    (self * MONTH).round
+    (self * MONTH).to_f
   end
   alias :month :months
 
   #:nodoc:
   def weeks
-    (self * WEEK).round
+    (self * WEEK).to_f
   end
   alias :week :weeks
 
   #:nodoc:
   def days
-    (self * DAYS).round
+    (self * DAYS).to_f
   end
   alias :day :days
 
   #:nodoc:
   def hours
-    (self * HOUR).round
+    (self * HOUR).to_f
   end
   alias :hour :hours
 
   #:nodoc:
   def minutes
-    (self * MINUTE).round
+    (self * MINUTE).to_f
   end
   alias :minute :minutes
 
   #:nodoc:
   def seconds
-    (self * SECONDS).round
+    (self * SECONDS).to_f
   end
   alias :second :seconds
 

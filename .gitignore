@@ -1,5 +1,6 @@
 .rspec
 doc/
 data/
+coverage/
 NERD_*
 rst-0*gem

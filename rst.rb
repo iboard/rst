@@ -5,8 +5,15 @@ module RST
   STOREPATH = File.expand_path('../data/', __FILE__)
 
   
+  # intialize the logger
   def logger
-    @logger ||= Logger.new(STDOUT)
+    @logger ||= Logger.new(STDERR)
+  end
+
+  # initialize a new logger
+  # @param [File|Stream] _output
+  def logger!(_output)
+    @logger = Logger.new(_output)
   end
 
 
