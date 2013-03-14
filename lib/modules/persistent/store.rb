@@ -29,7 +29,7 @@ module RST
       end
 
       # Add an object and sync store
-      # @param [Object] any object including the Persistent-module
+      # @param [Object] object - object including the Persistent-module
       def <<(object)
         if object
           @objects << object

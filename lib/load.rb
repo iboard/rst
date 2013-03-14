@@ -1,4 +1,6 @@
 unless defined? LIB_LOADED
+
+  # prevent double loading
   LIB_LOADED = true
   require File.expand_path('../../rst',__FILE__)
 
