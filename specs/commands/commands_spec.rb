@@ -37,11 +37,10 @@ describe 'Command-line arguments' do
     got.should =~ /Wed, Sep 02 1964/
   end
 
-  pending 'should store a calendar with a name' do
-    got = run_shell('bin/rst cal --name=Birthdays --event=1964-08-31,Andi´s Birthday')
-    got.strip.should == ''
+  it 'should store a calendar with a name' do
+    run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
-    got.should =~ /Mon, Aug 31 1964\: Andi´s Birthday/
+    got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
 end

@@ -16,6 +16,7 @@ unless defined? LIB_LOADED
   $LOAD_PATH.unshift(File.expand_path('../modules/calendar',__FILE__))
   require 'calendar'
   require 'eventable'
+  require 'calendar_event'
 
   $LOAD_PATH.unshift(File.expand_path('../modules/persistent',__FILE__))
   require 'persistent'

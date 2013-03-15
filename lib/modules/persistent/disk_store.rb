@@ -6,14 +6,48 @@ module RST
     # @see RST::Persistent::Store
     class DiskStore < Store
 
+      attr_reader :filename
+
+      # The first argument is the filename
+      # Following args are passed to base-class
+      # @example
+      #
+      #     DiskStore.new('myfile')
+      #     DiskStore.new(filename: 'myfile', other_option: '...')
+      #
+      # @param [Array] args - first must be the filename
+      def initialize(_filename='store.data',args={})
+        @filename = _filename
+        super(args)
+      end
+
+      # @return [String] full path of PStore-file
+      def path
+        @store.path
+      end
+
+      # @todo This is bad for performance and memory - refactor!
+      # @return [Array]
+      def all
+        _all = []
+        @store.transaction(true) do |s|
+          s.roots.each do |_r|
+            _all << s[_r]
+          end
+        end
+        _all
+      end
+
+      # Delete the store
+      def delete!
+        File.unlink(store_path)
+      end
+
       private
 
       # Initialize a PStore-instance
       def setup_backend
         @store = PStore.new(store_path)
-        @objects = @store.transaction do |s|
-          s[:objects] || []
-        end
       end
 
 
@@ -29,13 +63,18 @@ module RST
         env = ENV['RST_ENV'] || 'development'
         _dir = File.join( prefix, env )
         FileUtils.mkdir_p(_dir)
-        File.join(_dir, 'store.data')
+        File.join(_dir, filename)
       end
 
-      # Write objects to disk
-      def sync_store
-        @store.transaction { |s| s[:objects] = @objects }
+      # Find and update or add an object to the store
+      # @param [Object] object
+      # @abstract - override in other StoreClasses
+      def update_or_add(object)
+        @store.transaction do |s|
+          s[object.id] = object
+        end
       end
+
     end
 
   end

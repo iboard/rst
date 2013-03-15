@@ -1,4 +1,5 @@
 require 'date'
+require 'modules/persistent/persistent'
 
 module RST
 
@@ -38,8 +39,23 @@ module RST
   #
   module Calendar
   
+    # Methods useful when dealing with Dates
+    module CalendarHelper
+
+      # @param [String|Time|Date] param - input whatever you want
+      # @return [Date] always returns a Date regardless of the type of input
+      def to_date(param)
+        return param if param.is_a?(Date) || param.is_a?(::Time)
+        return Date.today if param =~ /today/i
+        Date.parse(param)
+      end
+    end
+
     # Handle a range from :start_date to :end_date. Store it as :name
     class Calendar
+
+      include Persistent::Persistentable
+      include CalendarHelper
 
       attr_reader :name, :start_date, :end_date, :events
     
@@ -51,6 +67,25 @@ module RST
         @start_date = parse_date_param(_start)
         @end_date   = parse_date_param(_end)
         @events     = _events
+      end
+
+
+      # Setter for from-date
+      # @param [Date|String] from - Starting date
+      def from=(from)
+        @start_date = parse_date_param(from)
+      end
+
+      # Setter for to-date
+      # @param [Date|String] to - Starting date
+      def to=(to)
+        @end_date = parse_date_param(to)
+      end
+
+      # Override Persistentable's id-method
+      # @return [String] - the calendar-name is it's id
+      def id
+        @name || super
       end
 
       # Add Eventables to the calendar
@@ -66,32 +101,32 @@ module RST
   
       # list days
       # @return [String]
-      def list_days
-        (start_date..end_date).to_a.map do |date|
-          [date.strftime('%a, %b %d %Y'), events_on(date)].compact.join(": ")
+      def list_days(start_on=start_date,end_on=end_date)
+        start_on = parse_date_param(start_on)
+        end_on   = parse_date_param(end_date)
+        (start_on..end_on).to_a.map do |_date|
+          [_date.strftime('%a, %b %d %Y'), events_on(_date)].compact.join(": ")
         end
         .join("\n")
       end
       
   
       private
-  
+      # List Event-headlines for a given date
+      def events_on(date)
+        events.select { |event| event.event_date == date }.map(&:event_headline).join(' + ')
+      end
+      
       # Convert strings to a date
       # @param [Date|Time|String] param
       # @return [Date|Time]
       def parse_date_param(param)
         param ||= Date.today
-        return param if param.is_a?(Date) || param.is_a?(::Time)
-        return Date.today if param =~ /today/i
-        Date.parse(param)
-      end
-
-      # List Event-headlines for a given date
-      def events_on(date)
-        events.select { |event| event.event_date == date }.map(&:event_headline).join(' + ')
+        to_date(param)
       end
   
     end
-  
+
   end
+
 end

@@ -63,8 +63,9 @@ module RST
           @options[:name] = name
         end
 
-        opts.on('-e', '--event DATE,STRING', Array, 'Add an event') do |date,name|
-          @options[:event] = {date: date, label: name}
+        opts.on('--new-event DATE,STRING', Array, 'Add an event') do |date,name|
+          @options[:new_event] = {date: date, label: name}
+          @options[:from], @options[:to] = date,date
         end
 
         opts.separator ''
@@ -85,8 +86,9 @@ module RST
     def run_options
       options.map do |k,v|
         case k.to_s
-        when 'examples'; File.read(File.join(DOCS,'examples.md')).strip;
-        when 'verbose' ; print_arguments;
+        when 'examples';   File.read(File.join(DOCS,'examples.md')).strip;
+        when 'verbose' ;   print_arguments;
+        when 'new_event';  add_event;
         else
           #noop ignore unknown options likely it's a param for an argument
         end
@@ -130,8 +132,23 @@ module RST
 
     # Output one line per day between start and end-date
     def print_calendar
-      cal = Calendar::Calendar.new(options[:name], options[:from], options[:to])
+      store = Persistent::DiskStore.new('calendar.data')
+      cal = store.find(options[:name]) || Calendar::Calendar.new(options[:name], options[:from], options[:to])
+      cal.from, cal.to = options[:from], options[:to]
       puts cal.list_days
+    end
+
+    # Add an event to the calendar 'name'
+    def add_event
+      date = options[:new_event].fetch(:date) { Date.today.strftime('%Y-%m-%d') }
+      label = options[:new_event].fetch(:label)
+      calendar_name = options.fetch(:name) { 'calendar' }
+
+      store = Persistent::DiskStore.new('calendar.data')
+      calendar = store.find(calendar_name) || Calendar::Calendar.new(calendar_name)
+
+      calendar << Calendar::CalendarEvent.new( date, label )
+      store << calendar
     end
 
   end

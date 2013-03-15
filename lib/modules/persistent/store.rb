@@ -31,26 +31,29 @@ module RST
       # Add an object and sync store
       # @param [Object] object - object including the Persistent-module
       def <<(object)
-        if object
-          @objects << object
-          sync_store
-        end
+        update_or_add(object)
       end
 
       # @return [Array]
       def all
-        @objects || []
+        raise AbstractMethodCallError.new('Please, overrwrite #{__callee__} in #{self.class.to_s}')
       end
 
       # @return [Object|nil] the first object in the store
       def first
-        @objects.first
+        all.first
       end
 
       # @param [Array] ids to search
       # @return [Array] objects with matching ids
       def find(*ids)
         flatten all.select { |obj| ids.include?(obj.id) }
+      end
+
+      # Delete the store
+      # @abstract - override this for real persistent store-classes
+      def delete!
+        @objects = []
       end
 
       private
@@ -76,9 +79,19 @@ module RST
         nil if result.nil? || result.empty?
         if result.count == 1
           result.first
+        elsif result.empty?
+          nil
         else
           result
         end
+      end
+
+
+      # Find and update or add an object to the store
+      # @param [Object] object
+      # @abstract - override in other StoreClasses
+      def update_or_add(object)
+        raise AbstractMethodCallError.new('Please, overrwrite #{__callee__} in #{self.class.to_s}')
       end
 
     end

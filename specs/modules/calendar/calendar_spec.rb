@@ -3,6 +3,7 @@ require_relative '../../spec_helper'
 describe 'Calendar module:' do
 
   describe 'Calendar Class' do
+
     it 'should define a start and ending date' do
       calendar = Calendar::Calendar.new( 'noname', Date.today, Date.today-42.years )
       calendar.start_date.should == Date.today
@@ -38,6 +39,22 @@ describe 'Calendar module:' do
       cend.end_date    == Date.today
       cfrom.start_date == Date.today
     end
+
+    it 'should have a setter method for :from, and :to' do
+      cal = Calendar::Calendar.new('dob','1.1.1970', '2.1.1970')
+      cal.start_date.year.should == 1970
+      cal.end_date.year.should == 1970
+      cal.from = '31.8.1964'
+      cal.to   = '28.8.1969'
+      cal.start_date.year.should  == 1964
+      cal.end_date.year.should    == 1969
+    end
+
+    it '.id should be the name of the calendar' do
+      cal = Calendar::Calendar.new('Hurray')
+      cal.id.should == 'Hurray'
+    end
+
   end
 
   describe 'Eventable module' do

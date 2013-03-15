@@ -6,15 +6,35 @@ describe Persistent do
   describe 'Abstract Store' do
 
     it 'should raise an exception if setup_store is not overwritten' do
-      expect { s = Persistent::Store.new }.to raise_error( AbstractMethodCallError )
+      expect { Persistent::Store.new }.to raise_error( AbstractMethodCallError )
     end
 
+    describe 'if setup_store is overwritten but no other abstract method' do
+      before do
+        class Dummy < Persistent::Store
+          def setup_backend
+            @objects = []
+          end
+        end
+      end
+
+      it 'should raise an exceptions if abstract methods not overwritten' do
+        dummy = Dummy.new
+        expect { dummy.all }.to raise_error( AbstractMethodCallError )
+        expect { dummy << Object.new }.to raise_error( AbstractMethodCallError )
+      end
+
+      it 'should delete the store' do 
+        dummy = Dummy.new
+        expect { dummy.delete! }.not_to raise_error
+      end
+    end
   end
 
   describe 'MemoryStore' do
 
     class Something < Struct.new :name
-      include Persistent
+      include Persistent::Persistentable
     end
 
     before do
@@ -61,20 +81,41 @@ describe Persistent do
       @store.find(o1.id,o2.id).should == [o1,o2]
     end
 
+    it 'should return nil if nothing is found' do
+      @store.find("Nothing").should be_nil
+    end
+
   end
 
   describe 'DiskStore' do
      
     before do
-      @store = Persistent::DiskStore.new
+      @store = Persistent::DiskStore.new('hardstore.data')
+    end
+    
+    it '.delete! should remove the file' do
+      @store << OpenStruct.new(id: 'Hello')
+      File.exist?(@store.path).should be_true
+      @store.delete!
+      File.exist?(@store.path).should be_false
     end
 
-    it 'should store an object to disk' do
-      object = OpenStruct.new name: 'HardStore'
+    it '.<< should add an object and store it to disk' do
+      object = OpenStruct.new id: nil, name: 'HardStore'
       @store << object
-      another_store =  Persistent::DiskStore.new
+      another_store =  Persistent::DiskStore.new('hardstore.data')
       reloaded = another_store.find object.id
       reloaded.name.should == 'HardStore'
+    end
+
+    it '.<< should update existing objects rather than add new objects' do
+      @store.delete!
+      @store << object = OpenStruct.new( id: '1', name: 'HardStore' )
+      @store.all.count.should == 1
+      object[:name] = 'SoftStore'
+      @store << object
+      @store.all.count.should == 1
+      @store.find('1')[:name].should == 'SoftStore'
     end
   end
 

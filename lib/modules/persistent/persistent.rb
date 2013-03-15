@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'fileutils'
 
 module RST
 
@@ -8,17 +9,26 @@ module RST
 
     KEY_LENGTH=8  # Length of Store-IDs
 
-    # Save the object to Store
-    def save
-    end
+    # The interface for persistent-able objects
+    module Persistentable
 
-    # Remove the object from Store
-    def delete
-    end
+      # Save the object to Store
+      def save
+      end
 
-    # Set and return an unique ID
-    def id
-      @id ||= SecureRandom::hex(KEY_LENGTH)
+      # Remove the object from Store
+      def delete
+      end
+
+      # If the object doesn't provide an id-method
+      # define one
+      unless respond_to?(:id)
+        # Set and return an unique ID
+        def id
+          @id ||= SecureRandom::hex(KEY_LENGTH)
+        end
+      end
+
     end
 
   end
