@@ -23,9 +23,9 @@ describe 'Calendar module:' do
 
     it 'should list week days' do
       calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
-      calendar.list_days.should =~ /Mon, Aug 31 1964/
-      calendar.list_days.should =~ /Tue, Sep 01 1964/
-      calendar.list_days.should =~ /Wed, Sep 02 1964/
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964/
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Tue, Sep 01 1964/
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Wed, Sep 02 1964/
     end
 
     it 'should interpret today as argument' do
@@ -113,8 +113,8 @@ describe 'Calendar module:' do
       it 'should collect event-able objects' do
         @calendar << TestMeeting.new('Frank').schedule!('2.1.2013')
         @calendar << TestMeeting.new('Zappa').schedule!('5.1.2013')
-        @calendar.list_days.should =~ /Wed, Jan 02 2013\: MEETING with Frank/
-        @calendar.list_days.should =~ /Sat, Jan 05 2013\: MEETING with Zappa/
+        @calendar.list_days.join("\n").should =~ /Wed, Jan 02 2013\: MEETING with Frank/
+        @calendar.list_days.join("\n").should =~ /Sat, Jan 05 2013\: MEETING with Zappa/
       end
     end
   end

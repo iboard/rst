@@ -9,7 +9,7 @@ describe 'Command-line arguments' do
     got.should == <<-EOT
     Binary : bin/rst
     Command: 
-    Options: [:name, "unnamed"], [:from, "today"], [:to, "today"], [:verbose, true]
+    Options: [:name, "unnamed"], [:from, "today"], [:to, "today"], [:show_empty, false], [:verbose, true]
     Files  : Gemfile, Rakefile, README.md
     Gemfile	Rakefile	README.md
     EOT
@@ -31,7 +31,7 @@ describe 'Command-line arguments' do
   end
 
   it 'should print a little calendar' do
-    got = run_shell('bin/rst calendar --from=1964-08-31 --to=1964-09-02')
+    got = run_shell('bin/rst calendar --empty --from=1964-08-31 --to=1964-09-02')
     got.should =~ /Mon, Aug 31 1964/
     got.should =~ /Tue, Sep 01 1964/
     got.should =~ /Wed, Sep 02 1964/

@@ -60,8 +60,8 @@ module RST
       attr_reader :name, :start_date, :end_date, :events
     
       # @param [String] _name Name of this calendar. Also used when storing
-      # @param [Date|Time|String] _start The date where the calendar starts
-      # @param [Date|Time|String] _end   The date where the calendar ends
+      # @param [Date|Time|String] _start The date when the calendar starts
+      # @param [Date|Time|String] _end   The date when the calendar ends
       def initialize(_name='unnamed', _start='today',_end='today',_events=[])
         @name       = _name
         @start_date = parse_date_param(_start)
@@ -71,13 +71,13 @@ module RST
 
 
       # Setter for from-date
-      # @param [Date|String] from - Starting date
+      # @param [Date|String] from - new starting date
       def from=(from)
         @start_date = parse_date_param(from)
       end
 
       # Setter for to-date
-      # @param [Date|String] to - Starting date
+      # @param [Date|String] to - new ending date
       def to=(to)
         @end_date = parse_date_param(to)
       end
@@ -94,27 +94,30 @@ module RST
       end
   
       # Calculate the span between start and end in seconds
-      # @return Fixnum
+      # @return Float
       def span
         ((end_date - start_date)*Fixnum::DAYS).to_f
       end
   
       # list days
-      # @return [String]
-      def list_days(start_on=start_date,end_on=end_date)
+      # @param [String|Date] start_on - output begins on this day
+      # @param [String|Date] end_on   - output ends on this day
+      # @param [Boolean] show_empty   - output days with no events
+      # @return [Array] of Strings DATE: EVENT + EVENT + ....
+      def list_days(start_on=start_date,end_on=end_date,show_empty=false)
         start_on = parse_date_param(start_on)
         end_on   = parse_date_param(end_date)
         (start_on..end_on).to_a.map do |_date|
-          [_date.strftime('%a, %b %d %Y'), events_on(_date)].compact.join(": ")
+          _events = events_on(_date).map(&:event_headline).join(' + ')
+          [_date.strftime('%a, %b %d %Y'), _events].compact.join(": ") if show_empty || _events != ''
         end
-        .join("\n")
       end
       
   
       private
       # List Event-headlines for a given date
       def events_on(date)
-        events.select { |event| event.event_date == date }.map(&:event_headline).join(' + ')
+        events.select { |event| event.event_date == date }
       end
       
       # Convert strings to a date

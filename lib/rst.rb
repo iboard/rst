@@ -32,7 +32,7 @@ module RST
 
     # Interpret options from ARGV using Option Parser
     def parse_options
-      @options = { name: 'unnamed', from: 'today', to: 'today' }
+      @options = { name: 'unnamed', from: 'today', to: 'today', show_empty: false }
       OptionParser.new do |opts|
 
         opts.banner = 'Usage: rst COMMAND [options] [FILES..]'
@@ -66,6 +66,10 @@ module RST
         opts.on('--new-event DATE,STRING', Array, 'Add an event') do |date,name|
           @options[:new_event] = {date: date, label: name}
           @options[:from], @options[:to] = date,date
+        end
+         
+        opts.on('--[no-]empty', 'Show empty entries') do |show|
+          @options[:show_empty] = show
         end
 
         opts.separator ''
@@ -134,8 +138,7 @@ module RST
     def print_calendar
       store = Persistent::DiskStore.new('calendar.data')
       cal = store.find(options[:name]) || Calendar::Calendar.new(options[:name], options[:from], options[:to])
-      cal.from, cal.to = options[:from], options[:to]
-      puts cal.list_days
+      puts cal.list_days(options[:from], options[:to],options[:show_empty]).compact.join("\n")
     end
 
     # Add an event to the calendar 'name'
