@@ -2,8 +2,9 @@ module RST
 
   module Persistent
 
-    # # MemoryStore doesn't really store the objects but holds them in
-    # memory, in a simple Array. Good for testing
+    # # MemoryStore 
+    # doesn't really store the objects but holds them in
+    # memory, in a simple Array. Perfect for testing
     class MemoryStore < Store
 
       private

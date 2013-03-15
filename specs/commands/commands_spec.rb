@@ -9,7 +9,7 @@ describe 'Command-line arguments' do
     got.should == <<-EOT
     Binary : bin/rst
     Command: 
-    Options: [:verbose, true]
+    Options: [:name, "unnamed"], [:from, "today"], [:to, "today"], [:verbose, true]
     Files  : Gemfile, Rakefile, README.md
     Gemfile	Rakefile	README.md
     EOT
@@ -35,6 +35,13 @@ describe 'Command-line arguments' do
     got.should =~ /Mon, Aug 31 1964/
     got.should =~ /Tue, Sep 01 1964/
     got.should =~ /Wed, Sep 02 1964/
+  end
+
+  pending 'should store a calendar with a name' do
+    got = run_shell('bin/rst cal --name=Birthdays --event=1964-08-31,Andi´s Birthday')
+    got.strip.should == ''
+    got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
+    got.should =~ /Mon, Aug 31 1964\: Andi´s Birthday/
   end
 
 end

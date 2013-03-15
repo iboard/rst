@@ -30,7 +30,7 @@ describe Persistent do
       @store.first.name.should == 'Frank'
     end
 
-    it 'should have store functions' do
+    it 'should have persistence functions' do
       @store.respond_to?(:find).should be_true
       dummy = Something.new
       dummy.respond_to?(:save).should be_true

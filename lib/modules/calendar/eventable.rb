@@ -3,6 +3,9 @@ module RST
 
     # Inject Eventable to any Class to
     # make this class event-able in a Calendar
+    # You have to define a method :event_headline in the class
+    # in order to list the event in a Calendar
+    # @see RST::Calendar::Calendar
     module Eventable
 
       # @return [Date] the date when the event is scheduled

@@ -1,8 +1,9 @@
 module RST
   module Persistent
 
-    # #DiskStore is responsible to save the Array of objects
+    # #DiskStore is responsible to save an Array of objects
     # persistently to the disk - We're using PStore to effort this.
+    # @see RST::Persistent::Store
     class DiskStore < Store
 
       private
@@ -18,8 +19,10 @@ module RST
 
       # Determine the store-path from RST::STOREPATH and
       # environment.
+      #
       # @example
       #     .../data/development/store.data
+      # 
       # @return [String] 
       def store_path
         prefix = ENV['RST_DATA'] || RST::STOREPATH
@@ -31,9 +34,7 @@ module RST
 
       # Write objects to disk
       def sync_store
-        @store.transaction do |s|
-          s[:objects] = @objects
-        end
+        @store.transaction { |s| s[:objects] = @objects }
       end
     end
 

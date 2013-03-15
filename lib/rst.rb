@@ -1,6 +1,6 @@
 require 'optparse'
 
-# Ruby Shell Tools main namespace RST
+# # Ruby Shell Tools main namespace RST
 #
 # @author Tue Mar 12 19:24:52 2013 <andreas@altendorfer.at>
 # @see https://github.com/iboard/rst
@@ -32,7 +32,7 @@ module RST
 
     # Interpret options from ARGV using Option Parser
     def parse_options
-      @options = {}
+      @options = { name: 'unnamed', from: 'today', to: 'today' }
       OptionParser.new do |opts|
 
         opts.banner = 'Usage: rst COMMAND [options] [FILES..]'
@@ -57,6 +57,14 @@ module RST
 
         opts.on('-t', '--to DATE', String, 'Set to-date') do |to|
           @options[:to] = to
+        end
+
+        opts.on('-n', '--name NAME', String, 'Use this name for the command') do |name|
+          @options[:name] = name
+        end
+
+        opts.on('-e', '--event DATE,STRING', Array, 'Add an event') do |date,name|
+          @options[:event] = {date: date, label: name}
         end
 
         opts.separator ''
@@ -122,7 +130,7 @@ module RST
 
     # Output one line per day between start and end-date
     def print_calendar
-      cal = Calendar::Calendar.new(options[:from], options[:to])
+      cal = Calendar::Calendar.new(options[:name], options[:from], options[:to])
       puts cal.list_days
     end
 
