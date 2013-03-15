@@ -25,7 +25,7 @@ After downloading the project you can do
 Usage
 -----
 
-see file `assets/docs/examples.md` or run
+see file [`assets/docs/examples.md`](https://github.com/iboard/rst/blob/master/assets/docs/examples.md#examples) or run
 
     bin/rst --examples
 
@@ -37,6 +37,33 @@ Documentation
 
 run `yard; open doc/index.html` to build the rdocs and open
 it in your browser.
+
+TDD
+---
+
+And as always we are **green**
+
+> $ rake
+>
+> Finished in _a few_ seconds
+>
+> _n_ examples, 0 failures
+>
+> Coverage report generated for RSpec to rst/coverage. _n_ / _n+-0_ LOC (**100.0%**) covered.
+>
+> $ yard
+>
+> Files:          _n_
+>
+> Modules:         _n_ (    0 undocumented)
+>
+> Classes:         _n_ (    0 undocumented)
+>
+> Constants:      _n_ (    0 undocumented)
+>
+> Methods:        _n_ (    0 undocumented)
+>
+> **100.00% documented**
 
 
 License
