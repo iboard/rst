@@ -63,7 +63,7 @@ module RST
           @options[:name] = name
         end
 
-        opts.on('--new-event DATE,STRING', Array, 'Add an event') do |date,name|
+        opts.on('-e', '--new-event DATE,STRING', Array, 'Add an event') do |date,name|
           @options[:new_event] = {date: date, label: name}
           @options[:from], @options[:to] = date,date
         end

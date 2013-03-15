@@ -1,14 +1,13 @@
 Ruby Shell Tools
 ================
 
-RST Version 0.0.0 is an experimental Ruby2-gem by 
-
-Tue Mar 12 21:54:38 2013 <andreas@altendorfer.at>
+RST Version 0.0.0 is an experimental Ruby2-gem by Andreas Altendorfer <andreas@altendorfer.at>
 
 Download and Install
 --------------------
 
-You can clone the project from Github
+You can clone the project from
+**[Github](https://github.com/iboard/rst)**
 
     git clone git://github.com/iboard/rst.git
 
