@@ -136,7 +136,7 @@ module RST
 
     # Output one line per day between start and end-date
     def print_calendar
-      store = Persistent::DiskStore.new('calendar.data')
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
       cal = store.find(options[:name]) || Calendar::Calendar.new(options[:name], options[:from], options[:to])
       cal.list_days(options[:from], options[:to],options[:show_empty]).compact.join("\n")
     end
@@ -147,7 +147,7 @@ module RST
       label = options[:new_event].fetch(:label) { 'unnamed event' }
       calendar_name = options.fetch(:name) { 'calendar' }
       event=Calendar::CalendarEvent.new( date, label )
-      store = Persistent::DiskStore.new('calendar.data')
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
       calendar = store.find(calendar_name) || Calendar::Calendar.new(calendar_name)
 
       calendar << event
@@ -157,7 +157,7 @@ module RST
 
     # remove a calendar from calendar-file named in options[:delete_calendar]
     def delete_calendar
-      store = Persistent::DiskStore.new('calendar.data')
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
       store -= OpenStruct.new(id: options[:delete_calendar])
       nil
     end

@@ -6,6 +6,9 @@ unless defined? LIB_LOADED
   # Used with strftime(DEFAULT_DATE_FORMAT) when outputting dates
   DEFAULT_DATE_FORMAT = '%a, %b %d %Y'
 
+  # Filename for the calendar-store
+  CALENDAR_FILE = 'calendars.data'
+
   require File.expand_path('../../rst',__FILE__)
 
   # Load all necessary files

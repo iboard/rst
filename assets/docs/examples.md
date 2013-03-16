@@ -65,7 +65,7 @@ overwrite this by defining env-vars for RST_DATA and RST_ENV
     /Users/you/.rst
     /Users/you/.rst/data
     /Users/you/.rst/data/production
-    /Users/you/.rst/data/production/calendar.data
+    /Users/you/.rst/data/production/CALENDAR_FILE
     
 
 The full set of parameters is
