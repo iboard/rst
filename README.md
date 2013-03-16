@@ -1,13 +1,18 @@
 Ruby Shell Tools
 ================
 
-RST Version 0.0.0 is an experimental Ruby2-gem by Andreas Altendorfer <andreas@altendorfer.at>
+RST Version 0.0.1 is an experimental Ruby2-gem by Andreas Altendorfer <andreas@altendorfer.at>
 
-Download and Install
---------------------
+Install from rubygems.org
+-------------------------
 
-You can clone the project from
-**[Github](https://github.com/iboard/rst)**
+    gem install rubyshelltools
+
+
+Clone from Github
+-----------------
+
+You can clone the project from **[Github](https://github.com/iboard/rst)**
 
     git clone git://github.com/iboard/rst.git
 

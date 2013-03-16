@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
-  s.name        = 'rst'
-  s.version     = '0.0.0'
-  s.date        = '2013-03-13'
+  s.name        = 'rubyshelltools'
+  s.version     = '0.0.1'
+  s.date        = '2013-03-16'
   s.summary     = "Ruby Shell Tools"
   s.description = "Tools for the unix shell"
   s.authors     = ["Andi Altendorfer"]
@@ -15,5 +15,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec')
   s.add_development_dependency('yard')
   s.extra_rdoc_files = ['README.md', 'assets/docs/examples.md']
-  s.homepage    = 'http://rubygems.org/gems/rst'
+  s.homepage    = 'http://rubygems.org/gems/rubyshelltools'
 end
