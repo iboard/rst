@@ -152,7 +152,7 @@ module RST
 
     # Execute a single option
     # @see [parse_options], [run_options] 
-    # @params String option (examples, verbose, new_event,...)
+    # @param String option (examples, verbose, new_event,...)
     def run_option(option)
       case option.to_s
       when 'examples'

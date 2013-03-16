@@ -1,4 +1,4 @@
-# Monkey-patch the numeric class to support n.years,days,... like Rails do
+# Monkey-patch the numeric class to support n.years,days,... as Rails do
 class Numeric
 
   #:nodoc:

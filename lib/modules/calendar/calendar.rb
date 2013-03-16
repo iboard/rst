@@ -10,39 +10,39 @@ module RST
   #
   # @example
   #
-  #     ATTENTION - This is a draft and not working yet (this way)
-  #
-  #     class Person < Struct.new(:name,:dob)
+  #     class Person
   #       include Eventable
+  #
+  #       def initialize name, dob
+  #         @name = name
+  #         schedule! dob
+  #       end
+  #
+  #       # override abstract method to format the output
   #       def event_headline
   #         '#{name}\'s Birthday'
   #       end
   #     end
   #
-  #     birthdays = Calendar.new('birthdays', '1964-01-01','today')
+  #     birthdays = Calendar.new('birthdays')
   #     birthdays << Person.new('Andi',   '31. Aug. 1964')
   #     birthdays << Person.new('Heidi',  '28. Aug. 1969')
   #     birthdays << Person.new('Julian', '17. Feb. 1995')
   #     birthdays << Person.new('Tina',   '22. May. 1997')
   #
-  #     pus birthdays.list_days =>
-  #       Mon, Aug 31 1964: Andi's Birthday
-  #       ...
-  #       Thu, Aug 28 1969: Heidi's Birthday
-  #       ...
-  #       Fri, Feb 17 1995: Julian's Birthday
-  #       ...
-  #       Thu, May 22 1997: Tina's Birthday
-  #       ...
-  #       Fri, Mar 15 2013:
-  #
+  #     puts birthdays.list_days('31.8.1963','today') 
+  #     # => Mon, Aug 31 1964: Andi's Birthday
+  #     # => Thu, Aug 28 1969: Heidi's Birthday
+  #     # => Fri, Feb 17 1995: Julian's Birthday
+  #     # => Thu, May 22 1997: Tina's Birthday
   #
   module Calendar
   
     # Methods useful when dealing with Dates
     module CalendarHelper
 
-      # @param [nil|String|Time|Date] param - input whatever you want ('today' also works)
+      # You can use 'today' or any format which Date.parse can handle.
+      # @param [nil|String|Time|Date] param
       # @return [Date] always returns a Date regardless of the type of input
       def to_date(param)
         if param.is_a?(Date) || param.is_a?(::Time)
@@ -55,7 +55,9 @@ module RST
       end
     end
 
-    # Handle a range from :start_date to :end_date. Store it as :name
+    # Calendar has a name and will be stored in Persistent::DiskStore('calendar.data')
+    # with it's name as the id. Thus you can save different calendars in
+    # the same file. If no name is given 'unnamed' will be the default.
     class Calendar
 
       include Persistent::Persistentable
@@ -63,7 +65,7 @@ module RST
 
       attr_reader :name, :start_date, :end_date, :events
    
-      # @param [String] _name Name of this calendar. Also used when storing
+      # @param [String] _name Name and persistent-id of this calendar.
       # @param [Date|Time|String] _start The date when the calendar starts
       # @param [Date|Time|String] _end   The date when the calendar ends
       def initialize(_name='unnamed', _start=nil, _end=nil, _events=[])
@@ -100,10 +102,14 @@ module RST
       # Calculate the span between start and end in seconds
       # @return Float
       def span
-        ((end_date - start_date)*Fixnum::DAYS).to_f
+        ((end_date - start_date)*Numeric::DAYS).to_f
       end
   
-      # list days
+      # Array of strings for each day with events on it.
+      #
+      # @example
+      #     Mon, Aug 31 1964: Birthday Andreas Altendorfer
+      #
       # @param [String|Date] start_on - output begins on this day
       # @param [String|Date] end_on   - output ends on this day
       # @param [Boolean] show_empty   - output days with no events

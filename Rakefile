@@ -6,14 +6,19 @@ options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
 # Application Tasks
 task :default => 'test'
 
-desc "Run specs"
+desc "Run all specs"
 task :test do
-  system "rspec -f d #{options} specs"
+  system "rspec -f p #{options} specs"
 end
 
 desc "Run module-specs only"
 task :modules do
   system "rspec -f d #{options} specs/modules"
+end
+
+desc "Run command-specs only (slower because of system-calls)"
+task :commands do
+  system "rspec -f d #{options} specs/commands"
 end
 
 desc "Build GEM"
