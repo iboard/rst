@@ -17,6 +17,9 @@ Print out available options and commands
         -t, --to DATE                    Set to-date
         -n, --name NAME                  Use this name for the command
         -e, --new-event DATE,STRING      Add an event
+            --list-calendars             List available calendars
+            --delete-calendar CALENDARNAME
+                                         Delete an calendar and all it's entries!
             --[no-]empty                 Show empty entries
     Commands:
         nil .......... no command. Interpret options only (useful in combination with -v)
