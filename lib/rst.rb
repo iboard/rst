@@ -1,4 +1,5 @@
 require 'optparse'
+require 'ostruct'
 
 # # Ruby Shell Tools main namespace RST
 #
@@ -63,6 +64,10 @@ module RST
 
         opts.on('-e', '--new-event DATE,STRING', Array, 'Add an event') do |date,name|
           @options[:new_event] = {date: date, label: name}
+        end
+         
+        opts.on('--delete-calendar CALENDARNAME', String, 'Delete an calendar and all it\'s entries!') do |name|
+          @options[:delete_calendar] = name
         end
          
         opts.on('--[no-]empty', 'Show empty entries') do |show|
@@ -150,6 +155,14 @@ module RST
       event
     end
 
+    # remove a calendar from calendar-file named in options[:delete_calendar]
+    def delete_calendar
+      store = Persistent::DiskStore.new('calendar.data')
+      store -= OpenStruct.new(id: options[:delete_calendar])
+      nil
+    end
+
+
     # Execute a single option
     # @see [parse_options], [run_options] 
     # @param String option (examples, verbose, new_event,...)
@@ -162,6 +175,8 @@ module RST
       when 'new_event'
         new_event = add_event
         "Added: %s: %s" % [new_event.event_date.strftime(DEFAULT_DATE_FORMAT), new_event.event_headline.strip]
+      when 'delete_calendar'
+        delete_calendar
       else
         nil #noop ignore unknown options likely it's a param for an argument
       end

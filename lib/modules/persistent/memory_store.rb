@@ -28,6 +28,11 @@ module RST
         @objects << object
       end
 
+      # @param [Object] object
+      # @abstract - override in concrete StoreClasses
+      def remove_object(object)
+        @objects -= [object]
+      end
     end
   end
 end

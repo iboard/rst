@@ -74,6 +74,13 @@ module RST
           s[object.id] = object
         end
       end
+     
+      # @param [Object] object
+      def remove_object(object)
+        @store.transaction do |s|
+          s.delete(object.id)
+        end
+      end
 
     end
 

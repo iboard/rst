@@ -34,6 +34,12 @@ module RST
         update_or_add(object)
       end
 
+      # Remove an object from the store
+      def -(object)
+        remove_object(object)
+        self
+      end
+
       # @return [Array]
       def all
         raise AbstractMethodCallError.new('Please, overrwrite #{__callee__} in #{self.class.to_s}')
@@ -90,6 +96,12 @@ module RST
       # @param [Object] object
       # @abstract - override in other StoreClasses
       def update_or_add(object)
+        raise AbstractMethodCallError.new('Please, overrwrite #{__callee__} in #{self.class.to_s}')
+      end
+
+      # @param [Object] object
+      # @abstract - override in concrete StoreClasses
+      def remove_object(object)
         raise AbstractMethodCallError.new('Please, overrwrite #{__callee__} in #{self.class.to_s}')
       end
 

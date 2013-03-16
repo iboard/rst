@@ -3,6 +3,10 @@ require 'ostruct'
 
 describe Persistent do
 
+  class Something < Struct.new :name
+    include Persistent::Persistentable
+  end
+
   describe 'Abstract Store' do
 
     it 'should raise an exception if setup_store is not overwritten' do
@@ -22,6 +26,7 @@ describe Persistent do
         dummy = Dummy.new
         expect { dummy.all }.to raise_error( AbstractMethodCallError )
         expect { dummy << Object.new }.to raise_error( AbstractMethodCallError )
+        expect { dummy -= Object.new }.to raise_error( AbstractMethodCallError )
       end
 
       it 'should delete the store' do 
@@ -32,10 +37,6 @@ describe Persistent do
   end
 
   describe 'MemoryStore' do
-
-    class Something < Struct.new :name
-      include Persistent::Persistentable
-    end
 
     before do
       @store = Persistent::MemoryStore.new
@@ -48,6 +49,16 @@ describe Persistent do
     it 'should be able to add and retrieve from store' do
       @store << OpenStruct.new(name:'Frank')
       @store.first.name.should == 'Frank'
+    end
+
+    it 'should remove objects from store' do
+      jimi  = Something.new('Jimi Hendrix')
+      frank = Something.new('Frank Zappa')
+      hansi = Something.new('Hansi Hinterseer')
+      [jimi,frank,hansi].each { |m| @store << m }
+      @store.all.should == [jimi,frank,hansi]
+      @store -= hansi
+      @store.all.should == [jimi, frank]
     end
 
     it 'should have persistence functions' do
@@ -106,6 +117,17 @@ describe Persistent do
       another_store =  Persistent::DiskStore.new('hardstore.data')
       reloaded = another_store.find object.id
       reloaded.name.should == 'HardStore'
+    end
+
+    it 'should remove objects from store' do
+      @store.delete!
+      jimi  = Something.new('Jimi Hendrix')
+      frank = Something.new('Frank Zappa')
+      hansi = Something.new('Hansi Hinterseer')
+      [jimi,frank,hansi].each { |m| @store << m }
+      @store.all.should == [jimi,frank,hansi]
+      @store -= hansi
+      @store.all.should == [jimi, frank]
     end
 
     it '.<< should update existing objects rather than add new objects' do
