@@ -4,6 +4,7 @@ module RST
     # #DiskStore is responsible to save an Array of objects
     # persistently to the disk - We're using PStore to effort this.
     # @see RST::Persistent::Store
+    # @api persistent
     class DiskStore < Store
 
       attr_reader :filename

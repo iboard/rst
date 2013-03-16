@@ -5,6 +5,7 @@ module RST
 
   # The Persistent-module injects Store-functions
   # to any Object including it.
+  # @api persistent
   module Persistent
 
     KEY_LENGTH=8  # Length of Store-IDs

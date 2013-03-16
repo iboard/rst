@@ -25,12 +25,17 @@ After downloading the project you can do
 Usage
 -----
 
-see file [`assets/docs/examples.md`](https://github.com/iboard/rst/blob/master/assets/docs/examples.md#examples) or run
+see file EXAMPLES.md:
+
+ * [At Github](https://github.com/iboard/rst/blob/master/assets/docs/examples.md#examples)
+ * [loacal copy](./file.examples.html)
+ 
+or run
 
     bin/rst --examples
 
 if you have done `rake install` you don't have to use `bin/rst` in 
-  the project-directory but you can use `rst ...` from any path
+the project-directory but you can use `rst ...` directly from the shell.
 
 Documentation
 -------------
@@ -38,10 +43,16 @@ Documentation
 run `yard; open doc/index.html` to build the rdocs and open
 it in your browser.
 
+The documentation can be found also at
+[dav.iboard.cc](http://dav.iboard.cc/container/rst-doc)
+
 TDD
 ---
 
 And as always we are **green**
+
+You can find the current output of [simplecov][] at [dav.iboard.cc](http://dav.iboard.cc/container/rst-coverage)
+
 
 > $ rake
 >
@@ -81,3 +92,5 @@ Copyright
 
 (c) 2013 by Andreas Altendorfer
 
+
+[simplecov]: http://github.com/colszowka/simplecov 

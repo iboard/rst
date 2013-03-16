@@ -3,37 +3,67 @@ require 'ostruct'
 
 # # Ruby Shell Tools main namespace RST
 #
-# @author Tue Mar 12 19:24:52 2013 <andreas@altendorfer.at>
+# By now only two commands/features are available:
+#
+#  * **ls** - List files from the filesystem (OS-like ls)
+#  * **cal[endar]** - Stores and lists events in one calendar-file, 
+#    separated in different named calendars 
+#
+# See [EXAMPLES.md](./file.examples.html) for detailed instruction.
+#
+#
+# @author Andi Altendorfer <andreas@altendorfer.at>
 # @see https://github.com/iboard/rst
 # @see http://altendorfer.at
 module RST
 
-  # Run commands given as ARGV with options
+  # Interprets and runs options and commands.
+  # @example
+  #   runner = RstCommand.new(ARGV)
+  #   puts runner.run
+  # See [EXAMPLES.md](../file.examples.html)
   class RstCommand
 
-    attr_reader :options # the hash stores options parsed with option_parser
-    attr_reader :command # the first argument of ARGV is the command
+    # Default options are always present, even if the user will not provide them.
+    # They can be overwritten, though. 
+    # @see #parse_options
+    DEFAULT_OPTIONS = { name: 'unnamed', from: 'today', to: 'today', show_empty: false }
 
-    # Initialize the Command-runner with arguments
-    # normally given on the command-line. See --help
+    # @group PUBLIC INTERFACE
+
+    # the hash stores options parsed in mehtod parse_options.
+    # @see #parse_options
+    attr_reader :options
+
+    # the first argument of ARGV is the command. It's extracted in run_command
+    # @see #run_command
+    attr_reader :command
+
+    # Initialize the Command-runner with arguments and parse them.
     def initialize(args)
       parse_options(args)
     end
 
-    # Call 'run_options' and 'run_arguments', reject empty returns and join
-    # output with CR
+    # Call 'run_options' and 'run_command', reject empty returns and join
+    #   output with CR
     # @return [String]
     def run
-      [run_options, run_arguments].compact.reject{|l| l.strip == '' }.join("\n")
+      [run_options, run_command].compact.reject{|l| l.strip == '' }.join("\n")
     end
 
     private
 
-    # Interpret options from ARGV using Option Parser
-    def parse_options(args)
-      @options = { name: 'unnamed', from: 'today', to: 'today', show_empty: false }
-      OptionParser.new do |opts|
+    # @group PREPARE OPTIONS AND COMMAND
 
+    # Interpret options from ARGV using OptionParser. No action here. The parsed
+    #   options get stored in '@options' and then will be used in run_options.
+    # @see #options
+    # @see #DEFAULT_OPTIONS
+    # @see #run_options
+    # @see #run_option
+    def parse_options(args)
+      @options = DEFAULT_OPTIONS
+      OptionParser.new do |opts|
         opts.banner = 'Usage: rst [COMMAND [COMMAND ....]] [options] [FILES..]'
 
         opts.separator "\nOptions:"
@@ -65,15 +95,15 @@ module RST
         opts.on('-e', '--new-event DATE,STRING', Array, 'Add an event') do |date,name|
           @options[:new_event] = {date: date, label: name}
         end
-         
+
         opts.on('--list-calendars', 'List available calendars') do
           @options[:list_calendars] = true
         end
-         
+
         opts.on('--delete-calendar CALENDARNAME', String, 'Delete an calendar and all it\'s entries!') do |name|
           @options[:delete_calendar] = name
         end
-         
+
         opts.on('--[no-]empty', 'Show empty entries') do |show|
           @options[:show_empty] = show
         end
@@ -88,9 +118,6 @@ module RST
         .gsub(/^\s+/,'    ')
 
         opts.separator "\n    use --example for a more detailed list of commands."
-
-
-
       end
       .parse!(args)
     rescue => e
@@ -98,86 +125,64 @@ module RST
       puts "Try #{File.basename($0)} --help"
     end
 
-    # Run previously parsed options
+    # Iterate over all given options and call run_option for each
+    # @see #run_option
     # @return [String]
     def run_options
       options.map { |k,_v| run_option(k) }.compact.join("\n")
     end
 
-    # The first argument of ARGV is the 'command'
-    # run known commands, print out unknwon commands with a hint to --help
+    # Run the 'command', the first argument of ARGV.
+    # If a command is not known/invalid print out a hint to --help
+    # Known commands are:
+    # @see #directory_listing
+    # @see #print_calendar
+    # @see #command
     # @return [String]
-    def run_arguments
+    def run_command
       case @command=ARGV.shift
       when nil, 'nil', 'null'
         ''
-      when 'ls'              
+      when 'ls'
         directory_listing(ARGV.empty? ? ['*'] : ARGV)
-      when 'cal', 'calendar' 
+      when 'cal', 'calendar'
         print_calendar
       else
         "unknown command '#{cmd.inspect}' - try --help"
       end
     end
 
-    # Output the previous interpreted and parsed arguments
-    def print_arguments
-      puts "Binary : #{$0}"
-      puts "Command: #{command}"
-      puts "Options: #{options.map(&:inspect).join(', ')}"
-      puts "Files  : #{ARGV.any? ? ARGV[1..-1].join(', ') : ''}"
-    end
 
-    # Do a Dir for each file-mask given
-    # @param [Array] files
-    # @return [String] - tab-delimited files
+    # @group EXECUTE COMMANDS
+
+    # Do a Dir for each file-mask given.
+    # Duplicated files are stripped.
+    # @example
+    #   rst ls lib/*rb
+    # @param [Array] files - a list of files/wildcards
+    # @return [String] - tab-delimited files found
     def directory_listing(files)
-      files.map do |f|
-        Dir[f].join("\t")
-      end
-      .uniq.join("\t")
+      files.map { |f| Dir[f].join("\t") }.uniq.join("\t")
     end
 
     # Output one line per day between start and end-date
+    # Start- and end-date are given with options --from, and --to
+    # Option --empty will output dates without events too.
+    # default is --no-empty which will suppress those lines in output
+    # @example 
+    #   rst cal --from 1.1.1990 --to today --name Birthdays
+    # @return [Array] - one string Date: Event + Event + ... for each day.
     def print_calendar
-      store = Persistent::DiskStore.new(CALENDAR_FILE)
-      cal = store.find(options[:name]) || Calendar::Calendar.new(options[:name], options[:from], options[:to])
-      cal.list_days(options[:from], options[:to],options[:show_empty]).compact.join("\n")
+      cal = find_calendar( Persistent::DiskStore.new(CALENDAR_FILE) )
+      cal.list_days(options[:from], options[:to], options[:show_empty]).compact.join("\n")
     end
 
-    # Add an event to the calendar 'name'
-    def add_event
-      date = options[:new_event].fetch(:date) { Date.today.strftime('%Y-%m-%d') }
-      label = options[:new_event].fetch(:label) { 'unnamed event' }
-      calendar_name = options.fetch(:name) { 'calendar' }
-      event=Calendar::CalendarEvent.new( date, label )
-      store = Persistent::DiskStore.new(CALENDAR_FILE)
-      calendar = store.find(calendar_name) || Calendar::Calendar.new(calendar_name)
-
-      calendar << event
-      store << calendar
-      event
-    end
-
-    # remove a calendar from calendar-file named in options[:delete_calendar]
-    def delete_calendar
-      store = Persistent::DiskStore.new(CALENDAR_FILE)
-      store -= OpenStruct.new(id: options[:delete_calendar])
-      nil
-    end
-
-    # List available calendars
-    def list_calendars
-      store = Persistent::DiskStore.new(CALENDAR_FILE)
-      store.all.map { |calendar|
-        cnt = calendar.events.count
-        "%-20.20s: %d %s" % [calendar.id, cnt > 0 ? cnt : 'no', cnt > 1 ? 'entries' : 'entry']
-      }
-    end
+    # @group EXECUTE ACTION FROM OPTIONS
 
     # Execute a single option
-    # @see [parse_options], [run_options] 
-    # @param String option (examples, verbose, new_event,...)
+    # @see #parse_options
+    # @see #run_options
+    # @param [String] option (examples, verbose, new_event,...)
     def run_option(option)
       case option.to_s
       when 'examples'
@@ -195,6 +200,96 @@ module RST
         nil #noop ignore unknown options likely it's a param for an argument
       end
     end
+
+    # Add an event to the calendar.
+    # @example
+    #   --add-event DATE,LABEL
+    # @return [CalendarEvent] - the just created event
+    def add_event
+      event_environment do |ee|
+        ee[:calendar] << ee[:event]
+        ee[:store] << ee[:calendar]
+        ee[:event]
+      end
+    end
+
+    # remove a calendar from calendar-file named in options[:delete_calendar]
+    # @example
+    #   --delete-calendar CALENDARNAME
+    def delete_calendar
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      store -= OpenStruct.new(id: options[:delete_calendar])
+      nil
+    end
+
+    # List available calendars and count events of each one.
+    # @return [Array] One line/String for each calendar
+    def list_calendars
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      store.all.map { |calendar|
+        cnt = calendar.events.count
+        "%-20.20s: %d %s" % [calendar.id, cnt > 0 ? cnt : 'no', cnt > 1 ? 'entries' : 'entry']
+      }
+    end
+
+    # Output the previous interpreted and parsed arguments
+    # Called when --verbose is given as an option
+    # @example
+    #   rst --verbose
+    def print_arguments
+      puts "Binary : #{$0}"
+      puts "Command: #{command}"
+      puts "Options: #{options.map(&:inspect).join(', ')}"
+      puts "Files  : #{ARGV.any? ? ARGV[1..-1].join(', ') : ''}"
+    end
+
+    # @group HELPERS
+
+    # Find or initialize a calendar-object. The name comes from option --name.
+    # @param [Store] store - the Store-object where to search for calendar
+    # @return [Calendar]
+    def find_calendar(store)
+      store.find(options[:name]) || Calendar::Calendar.new(options[:name], options[:from], options[:to])
+    end
+
+    # Find the date, label, and calendar_name for an event from options
+    # @yield [EventOptions]
+    def get_event_options
+      date = options[:new_event].fetch(:date) { Date.today.strftime('%Y-%m-%d') }
+      label = options[:new_event].fetch(:label) { 'unnamed event' }
+      calendar_name = options.fetch(:name) { 'calendar' }
+      yield(EventOptions.new(date, label, calendar_name))
+    end
+
+
+    # Initialize an EventEnvironment used to operate events in stores.
+    # @see #add_event
+    # @yield [EventEnvironment]
+    def event_environment
+      get_event_options do |eo|
+        event    = Calendar::CalendarEvent.new(eo[:date], eo[:label])
+        store    = Persistent::DiskStore.new(CALENDAR_FILE)
+        calendar = store.find(eo[:calendar_name]) || Calendar::Calendar.new(eo[:calendar_name])
+        yield(EventEnvironment.new(event,store,calendar))
+      end
+    end
+
   end
+
+  # @group HELPER CLASSES
+
+  # EventEnvironment holds the CalendarEvent and the DiskStore, and Calendar to which the event belongs
+  # @api private
+  # @see RstCommand#event_environment
+  class EventEnvironment < Struct.new(:event,:store,:calendar)
+  end
+
+  # EventOptions holds the options date,label, and calendar_name
+  # @api private
+  # @see RstCommand#get_event_options
+  class EventOptions < Struct.new(:date,:label,:calendar_name,)
+  end
+
+
 
 end

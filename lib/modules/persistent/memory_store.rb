@@ -5,6 +5,7 @@ module RST
     # # MemoryStore 
     # doesn't really store the objects but holds them in
     # memory, in a simple Array. Perfect for testing
+    # @api persistent
     class MemoryStore < Store
 
 
