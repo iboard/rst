@@ -3,8 +3,8 @@ module RST
   module Calendar
 
     # A CalendarEvent happens on a given date and
-    # has a label. It's supposed to be appended to
-    # an Calendar-object
+    # has a label. It's supposed to be appended to a Calendar-object
+    # @see Calendar
     class CalendarEvent 
 
       attr_reader :event_date, :label
@@ -15,7 +15,7 @@ module RST
       # @param [String|Date] _date - Date of the event (only all-day-events are possible yet)
       # @param [String] _label - Events name
       def initialize(_date,_label)
-        @event_date = to_date(_date)
+        @event_date = ensure_date(_date)
         @label = _label
       end
 

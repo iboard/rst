@@ -2,7 +2,7 @@ module RST
   module Persistent
 
     # #DiskStore is responsible to save an Array of objects
-    # persistently to the disk - We're using PStore to effort this.
+    # persistently to the disk - PStore is used to effort this.
     # @see RST::Persistent::Store
     # @api persistent
     class DiskStore < Store
@@ -16,7 +16,8 @@ module RST
       #     DiskStore.new('myfile')
       #     DiskStore.new(filename: 'myfile', other_option: '...')
       #
-      # @param [Array] args - first must be the filename
+      # @param [String] _filename 
+      # @param [Array] args - arguments passed to the super-class
       def initialize(_filename='store.data',args={})
         @filename = _filename
         super(args)
@@ -53,7 +54,7 @@ module RST
 
 
       # Determine the store-path from RST::STOREPATH and
-      # environment.
+      # environment. Creates the path if not exists.
       #
       # @example
       #     .../data/development/store.data
@@ -67,16 +68,15 @@ module RST
         File.join(_dir, filename)
       end
 
-      # Find and update or add an object to the store
+      # Find and update or add object to the store.
       # @param [Object] object
-      # @abstract - override in other StoreClasses
       def update_or_add(object)
         @store.transaction do |s|
           s[object.id] = object
         end
       end
      
-      # @param [Object] object
+      # @param [Object] object - the object to be removed.
       def remove_object(object)
         @store.transaction do |s|
           s.delete(object.id)

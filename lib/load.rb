@@ -1,9 +1,9 @@
 unless defined? LIB_LOADED
 
-  # prevent double loading
+  # prevent from double loading
   LIB_LOADED = true
 
-  # Used with strftime(DEFAULT_DATE_FORMAT) when outputting dates
+  # Used with strftime(DEFAULT_DATE_FORMAT) when printing dates
   DEFAULT_DATE_FORMAT = '%a, %b %d %Y'
 
   # Filename for the calendar-store

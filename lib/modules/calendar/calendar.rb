@@ -44,7 +44,7 @@ module RST
       # You can use 'today' or any format which Date.parse can handle.
       # @param [nil|String|Time|Date] param
       # @return [Date] always returns a Date regardless of the type of input
-      def to_date(param)
+      def ensure_date(param)
         if param.is_a?(Date) || param.is_a?(::Time)
           param
         elsif param =~ /today/i || param.nil?
@@ -76,7 +76,7 @@ module RST
       end
 
 
-      # Setter for from-date
+      # Setter for from_date
       # @param [Date|String] _from - new starting date
       def from=(_from)
         @start_date = parse_date_param(_from)
@@ -95,12 +95,13 @@ module RST
       end
 
       # Add Eventables to the calendar
+      # @param [Eventable] add - the Object to add
       def <<(add)
         events << add 
       end
   
       # Calculate the span between start and end in seconds
-      # @return Float
+      # @return [Float]
       def span
         ((end_date - start_date)*Numeric::DAYS).to_f
       end
@@ -123,15 +124,17 @@ module RST
   
       private
       # List Event-headlines for a given date
+      # @param [Date] date 
+      # @return [Array] of CalendarEvents
       def events_on(date)
         events.select { |event| event.event_date == date }
       end
       
       # Convert strings to a date
-      # @param [Date|Time|String] param
+      # @param [Date|Time|String] param - default is 'today'
       # @return [Date|Time]
       def parse_date_param(param=Date.today)
-        to_date(param)
+        ensure_date(param)
       end
 
       # Output date and Events on this date in one line

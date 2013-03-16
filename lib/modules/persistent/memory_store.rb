@@ -8,7 +8,6 @@ module RST
     # @api persistent
     class MemoryStore < Store
 
-
       # @return [Array]
       def all
         @objects || []
@@ -23,14 +22,12 @@ module RST
 
       # Find and update or add an object to the store
       # @param [Object] object
-      # @abstract - override in other StoreClasses
       def update_or_add(object)
         @objects -= [object]
         @objects << object
       end
 
-      # @param [Object] object
-      # @abstract - override in concrete StoreClasses
+      # @param [Object] object - the object to be removed
       def remove_object(object)
         @objects -= [object]
       end
