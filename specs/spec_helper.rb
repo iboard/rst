@@ -2,6 +2,7 @@ require 'tempfile'
 require 'stringio'
 
 ENV['RST_ENV'] = 'test'
+ENV['RST_DATA'] = File.expand_path('../../data',__FILE__)
 
 require 'simplecov'
 SimpleCov.start
@@ -9,17 +10,18 @@ SimpleCov.start
 require File.expand_path('../../lib/load',__FILE__)
 
 
-
-RSpec.configure do |c|
-  path = File.expand_path('../../data/test', __FILE__)
-  system 'rm', '-rf', path
+def clear_data_path
+  system 'rm', '-rf', File.expand_path('../../data/test',__FILE__)
 end
 
+RSpec.configure do |c|
+  clear_data_path
+end
 
 def run_shell(cmd)
   _rc = ""
   Tempfile.open('cmd') do |f|
-    system "#{cmd} > #{f.path}"
+    system "#{cmd} > #{f.path} 2>&1"
     f.close
     _rc = File.read(f.path)
   end
@@ -48,4 +50,5 @@ ensure
   reader.join
   return output
 end
+
 

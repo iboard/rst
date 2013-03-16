@@ -76,10 +76,9 @@ module RST
       # @return [Object] if result contains exactly one element
       # @return nil if result is empty
       def flatten result
-        nil if result.nil? || result.empty?
         if result.count == 1
           result.first
-        elsif result.empty?
+        elsif result.nil? || result.empty?
           nil
         else
           result

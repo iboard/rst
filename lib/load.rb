@@ -2,13 +2,17 @@ unless defined? LIB_LOADED
 
   # prevent double loading
   LIB_LOADED = true
+
+  # Used with strftime(DEFAULT_DATE_FORMAT) when outputting dates
+  DEFAULT_DATE_FORMAT = '%a, %b %d %Y'
+
   require File.expand_path('../../rst',__FILE__)
 
   # Load all necessary files
   $LOAD_PATH.unshift(File.expand_path('..',__FILE__))
 
   $LOAD_PATH.unshift(File.expand_path('../core_extensions',__FILE__))
-  require 'fixnum'
+  require 'numeric'
 
   $LOAD_PATH.unshift(File.expand_path('../errors',__FILE__))
   require 'store_errors'

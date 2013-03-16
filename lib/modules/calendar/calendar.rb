@@ -42,12 +42,16 @@ module RST
     # Methods useful when dealing with Dates
     module CalendarHelper
 
-      # @param [String|Time|Date] param - input whatever you want
+      # @param [nil|String|Time|Date] param - input whatever you want ('today' also works)
       # @return [Date] always returns a Date regardless of the type of input
       def to_date(param)
-        return param if param.is_a?(Date) || param.is_a?(::Time)
-        return Date.today if param =~ /today/i
-        Date.parse(param)
+        if param.is_a?(Date) || param.is_a?(::Time)
+          param
+        elsif param =~ /today/i || param.nil?
+          Date.today 
+        else
+          Date.parse(param)
+        end
       end
     end
 
@@ -58,11 +62,11 @@ module RST
       include CalendarHelper
 
       attr_reader :name, :start_date, :end_date, :events
-    
+   
       # @param [String] _name Name of this calendar. Also used when storing
       # @param [Date|Time|String] _start The date when the calendar starts
       # @param [Date|Time|String] _end   The date when the calendar ends
-      def initialize(_name='unnamed', _start='today',_end='today',_events=[])
+      def initialize(_name='unnamed', _start=nil, _end=nil, _events=[])
         @name       = _name
         @start_date = parse_date_param(_start)
         @end_date   = parse_date_param(_end)
@@ -71,15 +75,15 @@ module RST
 
 
       # Setter for from-date
-      # @param [Date|String] from - new starting date
-      def from=(from)
-        @start_date = parse_date_param(from)
+      # @param [Date|String] _from - new starting date
+      def from=(_from)
+        @start_date = parse_date_param(_from)
       end
 
       # Setter for to-date
-      # @param [Date|String] to - new ending date
-      def to=(to)
-        @end_date = parse_date_param(to)
+      # @param [Date|String] _to - new ending date
+      def to=(_to)
+        @end_date = parse_date_param(_to)
       end
 
       # Override Persistentable's id-method
@@ -105,12 +109,9 @@ module RST
       # @param [Boolean] show_empty   - output days with no events
       # @return [Array] of Strings DATE: EVENT + EVENT + ....
       def list_days(start_on=start_date,end_on=end_date,show_empty=false)
-        start_on = parse_date_param(start_on)
-        end_on   = parse_date_param(end_date)
-        (start_on..end_on).to_a.map do |_date|
-          _events = events_on(_date).map(&:event_headline).join(' + ')
-          [_date.strftime('%a, %b %d %Y'), _events].compact.join(": ") if show_empty || _events != ''
-        end
+        (parse_date_param(start_on)..parse_date_param(end_on)).to_a.map { |_date|
+          format_events_for(_date,show_empty)
+        }.compact
       end
       
   
@@ -123,9 +124,19 @@ module RST
       # Convert strings to a date
       # @param [Date|Time|String] param
       # @return [Date|Time]
-      def parse_date_param(param)
-        param ||= Date.today
+      def parse_date_param(param=Date.today)
         to_date(param)
+      end
+
+      # Output date and Events on this date in one line
+      # @param [Date] _date
+      # @param [Boolean] show_empty - do not output lines with no events
+      # @return [String]
+      def format_events_for(_date,show_empty=false)
+        if show_empty ||
+          (_events = events_on(_date).map(&:event_headline).join(' + ').strip) != ''
+          [_date.strftime(DEFAULT_DATE_FORMAT), _events].compact.join(": ")
+        end
       end
   
     end
