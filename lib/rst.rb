@@ -66,6 +66,10 @@ module RST
           @options[:new_event] = {date: date, label: name}
         end
          
+        opts.on('--list-calendars', 'List available calendars') do
+          @options[:list_calendars] = true
+        end
+         
         opts.on('--delete-calendar CALENDARNAME', String, 'Delete an calendar and all it\'s entries!') do |name|
           @options[:delete_calendar] = name
         end
@@ -162,6 +166,14 @@ module RST
       nil
     end
 
+    # List available calendars
+    def list_calendars
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      store.all.map { |calendar|
+        cnt = calendar.events.count
+        "%-20.20s: %d %s" % [calendar.id, cnt > 0 ? cnt : 'no', cnt > 1 ? 'entries' : 'entry']
+      }
+    end
 
     # Execute a single option
     # @see [parse_options], [run_options] 
@@ -175,6 +187,8 @@ module RST
       when 'new_event'
         new_event = add_event
         "Added: %s: %s" % [new_event.event_date.strftime(DEFAULT_DATE_FORMAT), new_event.event_headline.strip]
+      when 'list_calendars'
+        list_calendars
       when 'delete_calendar'
         delete_calendar
       else

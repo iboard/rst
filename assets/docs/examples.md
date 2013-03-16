@@ -67,6 +67,10 @@ overwrite this by defining env-vars for RST_DATA and RST_ENV
     /Users/you/.rst/data/production
     /Users/you/.rst/data/production/CALENDAR_FILE
     
+    $ rst --list-calendars
+    birthdays           : 5 entries
+    work                : 2 entries
+    
 
 The full set of parameters is
 

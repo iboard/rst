@@ -54,9 +54,17 @@ describe 'Command-line arguments' do
     run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
     got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
-    puts run_shell('bin/rst --delete-calendar Birthdays')
+    run_shell('bin/rst --delete-calendar Birthdays')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
     got.should_not =~ /Mon, Aug 31 1964\: Andis Birthday/
+  end
+
+  it 'should list calendars' do
+    run_shell('bin/rst cal --delete-calendar=Birthdays --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
+    run_shell('bin/rst cal --name=Birthdays --new-event="1969-08-28,Heidis Birthday"')
+    run_shell('bin/rst cal --name=Weddings --new-event="1991-12-28,Andi+Heidi"')
+    got = run_shell('bin/rst --list-calendars')
+    got.should == "unnamed             : 1 entry\nBirthdays           : 2 entries\nWeddings            : 1 entry"
   end
 
 end
