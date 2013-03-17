@@ -34,6 +34,7 @@ describe Persistent do
         expect { dummy.delete! }.not_to raise_error
       end
     end
+
   end
 
   describe 'MemoryStore' do
@@ -96,6 +97,19 @@ describe Persistent do
       @store.find("Nothing").should be_nil
     end
 
+    it '.create should act as a factory for objects' do
+      class Storeable < Struct.new(:name)
+        include Persistent::Persistentable
+      end
+
+      object = @store.create do
+        Storeable.new('Remember me')
+      end
+
+      object.store.should == @store
+      @store.find(object.id).should == object
+    end
+
   end
 
   describe 'DiskStore' do
@@ -139,6 +153,66 @@ describe Persistent do
       @store.all.count.should == 1
       @store.find('1')[:name].should == 'SoftStore'
     end
+  end
+
+  describe 'Persistentable' do
+
+    class Klass 
+      include Persistent::Persistentable
+      attr_accessor :name
+      def initialize n
+        @name = n
+      end
+    end
+
+
+    describe 'in a MemoryStore' do
+
+      before do
+        @store = Persistent::MemoryStore.new
+      end
+
+      it '.id should be a random hex if object doesn\'t provide an id' do
+        obj = Klass.new('dummy')
+        obj.id.should =~ /[0-9a-f]{#{Persistent::KEY_LENGTH}}/
+      end
+
+      it '.save updates the object in the store' do
+        object = @store.create { Klass.new('Slow car') }
+        object.name = 'Faaaast bike'
+        object.save
+        @store.find(object.id).name.should == 'Faaaast bike'
+      end
+
+      it '.delete removes the object from it\'s store' do
+        object = @store.create { Klass.new('Slow car') }
+        object.name = 'Faaaast bike'
+        object.delete
+        @store.find(object.id).should be_nil
+      end
+    end
+
+    describe 'in a DiskStore' do
+
+      before do
+        @disk = Persistent::DiskStore.new 'teststore'
+      end
+
+      it '.save updates the object in the store' do
+        object = @disk.create { Klass.new('Slow car') }
+        object.name = 'Faaaast bike'
+        object.save
+        @disk.find(object.id).name.should == 'Faaaast bike'
+      end
+
+      it '.delete removes the object from it\'s store' do
+        object = @disk.create { Klass.new('Slow car') }
+        object.name = 'Faaaast bike'
+        object.delete
+        @disk.find(object.id).should be_nil
+      end
+    end
+
   end
 
 end

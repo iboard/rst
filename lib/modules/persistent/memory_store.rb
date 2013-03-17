@@ -13,13 +13,6 @@ module RST
         @objects || []
       end
 
-      private
-
-      # Initialize an empty array as an in-memory-store
-      def setup_backend
-        @objects = []
-      end
-
       # Find and update or add an object to the store
       # @param [Object] object
       def update_or_add(object)
@@ -27,10 +20,19 @@ module RST
         @objects << object
       end
 
+
+      private
+
+      # Initialize an empty array as an in-memory-store
+      def setup_backend
+        @objects = []
+      end
+
       # @param [Object] object - the object to be removed
       def remove_object(object)
         @objects -= [object]
       end
+
     end
   end
 end

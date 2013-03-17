@@ -45,6 +45,14 @@ module RST
         File.unlink(store_path)
       end
 
+      # Find and update or add object to the store.
+      # @param [Object] object
+      def update_or_add(object)
+        @store.transaction do |s|
+          s[object.id] = object
+        end
+      end
+     
       private
 
       # Initialize a PStore-instance
@@ -68,21 +76,12 @@ module RST
         File.join(_dir, filename)
       end
 
-      # Find and update or add object to the store.
-      # @param [Object] object
-      def update_or_add(object)
-        @store.transaction do |s|
-          s[object.id] = object
-        end
-      end
-     
       # @param [Object] object - the object to be removed.
       def remove_object(object)
         @store.transaction do |s|
           s.delete(object.id)
         end
       end
-
     end
 
   end

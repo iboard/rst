@@ -16,6 +16,7 @@ unless defined? LIB_LOADED
 
   $LOAD_PATH.unshift(File.expand_path('../core_extensions',__FILE__))
   require 'numeric'
+  require 'mutex'
 
   $LOAD_PATH.unshift(File.expand_path('../errors',__FILE__))
   require 'store_errors'

@@ -36,11 +36,11 @@ end
 desc 'Build GEM'
 task :build do
   Rake::Task['doc'].execute
-  system 'gem build rst.gemspec'
+  system 'gem build rubyshelltools.gemspec'
 end
 
 desc 'Install GEM'
 task :install do
   Rake::Task['build'].execute
-  system "gem install rst-#{RST::VERSION}"
+  system "gem install rubyshelltools-#{RST::VERSION}"
 end

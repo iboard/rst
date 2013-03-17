@@ -67,6 +67,23 @@ module RST
         @objects = []
       end
 
+      # Create objects
+      # @return [Persistentable]
+      def create
+        obj = yield
+        obj.store = self
+        self << obj
+        obj
+      end
+
+      # Find and update or add an object to the store
+      # @param [Object] object
+      # @abstract - override in other StoreClasses
+      def update_or_add(object)
+        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
+      end
+
+
       private
 
       # callback called from initializer and aimed to initialize the
@@ -97,13 +114,6 @@ module RST
         end
       end
 
-
-      # Find and update or add an object to the store
-      # @param [Object] object
-      # @abstract - override in other StoreClasses
-      def update_or_add(object)
-        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
-      end
 
       # @param [Object] object
       # @abstract - override in concrete StoreClasses
