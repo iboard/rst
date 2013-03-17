@@ -11,8 +11,10 @@ module RST
   # Default DataStore-path. You can overwrite this by
   # defining `ENV[RST_DATA]`
   STOREPATH = File.expand_path('../data/', __FILE__)
-
   
+  # @see Persistent::DiskStore
+  DEFAULT_STORE_FILENAME = 'rst_data.pstore'
+
   # intialize the logger
   # @example Usage
   #   RST.logger.info('This will output to STDERR')

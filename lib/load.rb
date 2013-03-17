@@ -7,7 +7,12 @@ unless defined? LIB_LOADED
   DEFAULT_DATE_FORMAT = '%a, %b %d %Y'
 
   # Filename for the calendar-store
+  # @see Calendar::Calendar
   CALENDAR_FILE = 'calendars.data'
+
+  # If no calendar-name is given
+  # @see Calendar::Calendar
+  DEFAULT_CALENDAR_NAME = 'unnamed'
 
   require File.expand_path('../../rst',__FILE__)
 

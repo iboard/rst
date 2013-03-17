@@ -27,12 +27,14 @@ describe Persistent do
         expect { dummy.all }.to raise_error( AbstractMethodCallError )
         expect { dummy << Object.new }.to raise_error( AbstractMethodCallError )
         expect { dummy -= Object.new }.to raise_error( AbstractMethodCallError )
+        expect { dummy.send(:sync_store) }.to raise_error( AbstractMethodCallError )
       end
 
       it 'should delete the store' do 
         dummy = Dummy.new
-        expect { dummy.delete! }.not_to raise_error
+        expect { dummy.delete! }.to raise_error
       end
+
     end
 
   end
@@ -108,6 +110,21 @@ describe Persistent do
 
       object.store.should == @store
       @store.find(object.id).should == object
+    end
+
+    it '.delete should delete the store' do 
+      expect { @store.delete! }.not_to raise_error
+      @store.all.should be_empty
+    end
+
+    it 'should not allow to move the store once it\'s set' do
+      class DummyKlass
+        include Persistent::Persistentable
+      end
+      store = @store
+      store2= @store.class.new
+      obj = store.create { DummyKlass.new }
+      expect { obj.store=store2 }.to raise_error( NotImplementedError )
     end
 
   end

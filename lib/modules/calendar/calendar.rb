@@ -6,7 +6,9 @@ module RST
   # Calendar-module provides the Calendar-class which is supposed to hold
   # 'Eventable'-objects. Where Eventable is a module you can include to any class.
   # A Calendar has a start- and ending-date, and a name. The name is used
-  # to store the calendar in a store using this name.
+  # to store the calendar in a store using this name as the id.
+  #
+  # @see Persistent::DiskStore
   #
   # @example
   #
@@ -38,7 +40,7 @@ module RST
   #
   module Calendar
   
-    # Methods useful when dealing with Dates
+    # Some helper-methods useful when dealing with dates
     module CalendarHelper
 
       # You can use 'today' or any format which Date.parse can handle.
@@ -58,6 +60,9 @@ module RST
     # Calendar has a name and will be stored in Persistent::DiskStore(CALENDAR_FILE)
     # with it's name as the id. Thus you can save different calendars in
     # the same file. If no name is given 'unnamed' will be the default.
+    # @see CALENDAR_FILE
+    # @see Persistent::DiskStore
+    # @see Calendar::CalendarEvent
     class Calendar
 
       include Persistent::Persistentable
@@ -68,7 +73,8 @@ module RST
       # @param [String] _name Name and persistent-id of this calendar.
       # @param [Date|Time|String] _start The date when the calendar starts
       # @param [Date|Time|String] _end   The date when the calendar ends
-      def initialize(_name='unnamed', _start=nil, _end=nil, _events=[])
+      # @see DEFAULT_CALENDAR_NAME
+      def initialize(_name=DEFAULT_CALENDAR_NAME, _start=nil, _end=nil, _events=[])
         @name       = _name
         @start_date = parse_date_param(_start)
         @end_date   = parse_date_param(_end)
@@ -89,6 +95,7 @@ module RST
       end
 
       # Override Persistentable's id-method
+      # @see Persistent::Persistentable
       # @return [String] - the calendar-name is it's id
       def id
         @name || super
@@ -123,9 +130,9 @@ module RST
       
   
       private
-      # List Event-headlines for a given date
+      # All events on the given date
       # @param [Date] date 
-      # @return [Array] of CalendarEvents
+      # @return [Array] of [CalendarEvents]
       def events_on(date)
         events.select { |event| event.event_date == date }
       end
@@ -139,13 +146,19 @@ module RST
 
       # Output date and Events on this date in one line
       # @param [Date] _date
-      # @param [Boolean] show_empty - do not output lines with no events
+      # @param [Boolean] show_empty - do output lines with no events
       # @return [String]
       def format_events_for(_date,show_empty=false)
-        if show_empty ||
-          (_events = events_on(_date).map(&:event_headline).join(' + ').strip) != ''
-          [_date.strftime(DEFAULT_DATE_FORMAT), _events].compact.join(": ")
+        if show_empty || (_line=event_headlines_for(_date)) != ''
+          "%s: %s" % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
         end
+      end
+
+      # Concatenate headlines of all events on this date
+      # @param [Date] _date
+      # @return [String]
+      def event_headlines_for(_date)
+        events_on(_date).map(&:event_headline).join(' + ').strip
       end
   
     end

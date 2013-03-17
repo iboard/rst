@@ -20,6 +20,10 @@ module RST
         @objects << object
       end
 
+      # remove all objects
+      def delete!
+        @objects = []
+      end
 
       private
 
@@ -31,6 +35,12 @@ module RST
       # @param [Object] object - the object to be removed
       def remove_object(object)
         @objects -= [object]
+      end
+
+      # Make sure the current state of objects is stored
+      # @abstract - Overwrite in descendants thus every object gets persistently stored.
+      def sync_store
+        #noop for MemoryStore
       end
 
     end

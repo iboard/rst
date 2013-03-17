@@ -9,17 +9,12 @@ module RST
     # 
     # Store provides the interface for all store-able classes
     #
-    # ## Usage:
-    #
-    #   Derive a concrete store-class from 'Store' and overwrite the
-    #   following methods:
-    #
-    #   * setup_backend
-    #   * sync_store
-    #
-    # @abstract
+    # @abstract public API-methods should not be overwritten by descendant classes. 
+    #  But descendants must overwrite all methods marked as abstract here.
     #
     class Store
+
+      # @group PUBLIC API
 
       # Sets options-hash and calls the abstract
       # 'setup_backend'-callback
@@ -29,7 +24,7 @@ module RST
       end
 
       # Add an object and sync store
-      # @param [Persistentable] object - object including the Persistent-module
+      # @param [Persistentable] object - any object including the Persistent-module
       def <<(object)
         update(object)
       end
@@ -42,38 +37,47 @@ module RST
         self
       end
 
-      # @return Enumerable
-      # @abstract
-      def all
-        raise AbstractMethodCallError.new("Please, overwrite #{__callee__} in #{self.class.to_s}")
-      end
-
-      # @return [Object|nil] the first object in the store
+      # @return [Object|nil] the first object in the store or nil if the store is empty.
       def first
         all.first
       end
 
-      # @param [Array] ids to search
-      # @return [nil] if nothing found
+      # @param [Array|String] ids or id to search
+      # @return [nil]    if nothing found
       # @return [Object] if exactly one object found
-      # @return [Array] of objects with matching ids if more than one matched
+      # @return [Array]  of objects with matching ids if more than one matched
       def find(*ids)
         flatten all.select { |obj| ids.include?(obj.id) }
       end
 
-      # Delete the store
-      # @abstract - override this for real persistent store-classes
-      def delete!
-        @objects = []
-      end
 
-      # Create objects
-      # @return [Persistentable]
+      # Create objects and set the object's store-attribute
+      # @example
+      #
+      #   new_object = store.create
+      #     MyClass.new(....)
+      #   end
+      #
+      # @return [Persistentable] - the newly created object
       def create
         obj = yield
         obj.store = self
         self << obj
         obj
+      end
+
+      # @group ABSTRACT METHODS TO BE OVERWRITTEN IN DESCENDANTS
+
+      # @return Enumerable
+      # @abstract Overwrite in descendants thus it returns an Enumerable of all objects in the store
+      def all
+        raise AbstractMethodCallError.new("Please, overwrite #{__callee__} in #{self.class.to_s}")
+      end
+
+      # Delete the store
+      # @abstract - override this method in descendants thus the store removes all objects.
+      def delete!
+        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
       end
 
       # Find and update or add an object to the store
@@ -83,22 +87,12 @@ module RST
         raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
       end
 
-
+      # @endgroup
+      
       private
 
-      # callback called from initializer and aimed to initialize the
-      # objects-array, PStore, database-connection,...
-      # @abstract
-      def setup_backend
-        raise AbstractMethodCallError.new("Please override method :setup_backend in class #{self.class.to_s}")
-      end
-
-      # Make sure the current state of objects is stored
-      # @abstract
-      def sync_store
-        # RST.logger.warn("Store class #{self.class.to_s} should overwrite method :sync_store" )
-      end
-
+      # @group PRIVATE API
+      
       # Flatten the result of a select
       # @param [Array] result
       # @return [Array] if result contains more than one element
@@ -114,6 +108,20 @@ module RST
         end
       end
 
+      # @group ABSTRACT METHODS TO BE OVERWRITTEN IN DESCENDANTS
+
+      # callback called from initializer. Aimed to initialize the
+      # objects-array, PStore, database-connection,...
+      # @abstract - Overwrite in descendants thus they initialize the store.
+      def setup_backend
+        raise AbstractMethodCallError.new("Please override method :setup_backend in class #{self.class.to_s}")
+      end
+
+      # Make sure the current state of objects is stored
+      # @abstract - Overwrite in descendants thus every object gets persistently stored.
+      def sync_store
+        raise AbstractMethodCallError.new("Please override method :sync_store in class #{self.class.to_s}")
+      end
 
       # @param [Object] object
       # @abstract - override in concrete StoreClasses

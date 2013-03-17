@@ -4,21 +4,25 @@ module RST
     # #DiskStore is responsible to save an Array of objects
     # persistently to the disk - PStore is used to effort this.
     # @see RST::Persistent::Store
+    # @see Mutex
     # @api persistent
     class DiskStore < Store
 
-      attr_reader :filename
+      # [String] filename - used for PStore (no path! filename only) 
+      # @see #store_path
+      attr_reader :filename 
 
       # The first argument is the filename
       # Following args are passed to base-class
       # @example
       #
       #     DiskStore.new('myfile')
-      #     DiskStore.new(filename: 'myfile', other_option: '...')
-      #
+      #     DiskStore.new('myfile', other_option: '...')
+      #     DiskStore.new( nil, other_option: '...') # use default filename
+      # @see DEFAULT_STORE_FILENAME
       # @param [String] _filename 
       # @param [Array] args - arguments passed to the super-class
-      def initialize(_filename='store.data',args={})
+      def initialize(_filename=DEFAULT_STORE_FILENAME,args={})
         @filename = _filename
         super(args)
       end
@@ -56,6 +60,7 @@ module RST
       private
 
       # Initialize a PStore-instance
+      # @see store_path
       def setup_backend
         @store = PStore.new(store_path)
       end
@@ -65,8 +70,13 @@ module RST
       # environment. Creates the path if not exists.
       #
       # @example
-      #     .../data/development/store.data
+      #     RST_ENV=development
+      #     RST_DATA=$HOME/.rst-data
+      #
+      #     ~/.rst-data/development/store.data
       # 
+      # if no environment-variables defined, the defaulsts will be STOREPATH and 'development'
+      # @see STOREPATH
       # @return [String] 
       def store_path
         prefix = ENV['RST_DATA'] || RST::STOREPATH

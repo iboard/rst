@@ -40,9 +40,10 @@ module RST
       end
 
       # used in calendar-output as a short entry
+      # @abstract - overwrite in descendants
       # @return [String]
       def event_headline
-        "(untitled event)"
+        self.inspect
       end
 
     end

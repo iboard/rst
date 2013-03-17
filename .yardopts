@@ -1,1 +1,1 @@
--m markdown --protected --private - README.md assets/docs/examples.md
+-m markdown --protected --private rst.rb lib/**/*rb - README.md assets/docs/examples.md

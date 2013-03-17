@@ -81,7 +81,7 @@ describe 'Calendar module:' do
     end
 
     it 'should respond to event_headline' do
-      @obj.event_headline.should == '(untitled event)'
+      @obj.event_headline.should == @obj.inspect
     end
 
     it 'should allow to overwrite event_headline' do
