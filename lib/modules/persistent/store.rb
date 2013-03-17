@@ -31,7 +31,7 @@ module RST
       # Add an object and sync store
       # @param [Persistentable] object - object including the Persistent-module
       def <<(object)
-        update_or_add(object)
+        update(object)
       end
 
       # Remove an object from the store
@@ -79,7 +79,7 @@ module RST
       # Find and update or add an object to the store
       # @param [Object] object
       # @abstract - override in other StoreClasses
-      def update_or_add(object)
+      def update(object)
         raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
       end
 

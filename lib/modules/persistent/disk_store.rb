@@ -47,7 +47,7 @@ module RST
 
       # Find and update or add object to the store.
       # @param [Object] object
-      def update_or_add(object)
+      def update(object)
         @store.transaction do |s|
           s[object.id] = object
         end

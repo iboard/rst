@@ -23,7 +23,7 @@ module RST
 
       # Save the object to Store
       def save
-        store.update_or_add(self)
+        store.update(self)
       end
 
       # Remove the object from Store

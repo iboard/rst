@@ -15,7 +15,7 @@ module RST
 
       # Find and update or add an object to the store
       # @param [Object] object
-      def update_or_add(object)
+      def update(object)
         @objects -= [object]
         @objects << object
       end
