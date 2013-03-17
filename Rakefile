@@ -59,7 +59,7 @@ task :deploy do
     Rake::Task['doc_deploy'].execute
     system 'git', 'push', 'origin'
     system 'git', 'push', 'github'
-    system 'gem', 'push' "rubyshelltools-#{RST::VERSION}.gem"
+    system 'gem', 'push', "rubyshelltools-#{RST::VERSION}.gem"
   else
     puts "see you later!"
   end

@@ -1,12 +1,15 @@
 Ruby Shell Tools
 ================
 
-RST Version 0.0.1 is an experimental Ruby2-gem by Andreas Altendorfer <andreas@altendorfer.at>
+RubyShellTools, RST is an experimental Ruby2-gem by Andreas Altendorfer <andreas@altendorfer.at>
 
 Install from rubygems.org
 -------------------------
 
     gem install rubyshelltools
+    export RST_DATA=$HOME/.rst # default:  GEM_PATH/rubyshelltools/data
+    export RST_ENV=production  # defaults: development
+    rst --help
 
 
 Clone from Github
