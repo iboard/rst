@@ -3,7 +3,8 @@ module RST
 
     # Inject Eventable to any Class to make it event-able in a Calendar
     # You have to define a method :event_headline for the class
-    # in order to list the event in a Calendar
+    # in order to list the event in a Calendar.
+    #
     # @example
     #
     #   class Birthday < Struct.new(:name,:dob)
@@ -17,7 +18,7 @@ module RST
     #     def event_headline
     #       "It's #{name}'s Birthday"
     #     end
-    #  end
+    #   end
     #
     # @see RST::Calendar::Calendar
     module Eventable

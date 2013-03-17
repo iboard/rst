@@ -20,7 +20,7 @@ task :default => 'test'
 
 desc 'Run all specs'
 task :test do
-  system "rspec -f p #{options} specs"
+  system "rspec -f p #{options} specs/"
 end
 
 desc 'Run module-specs only'

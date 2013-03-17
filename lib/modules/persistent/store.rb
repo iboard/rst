@@ -71,20 +71,20 @@ module RST
       # @return Enumerable
       # @abstract Overwrite in descendants thus it returns an Enumerable of all objects in the store
       def all
-        raise AbstractMethodCallError.new("Please, overwrite #{__callee__} in #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
       # Delete the store
       # @abstract - override this method in descendants thus the store removes all objects.
       def delete!
-        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
       # Find and update or add an object to the store
       # @param [Object] object
       # @abstract - override in other StoreClasses
       def update(object)
-        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
       # @endgroup
@@ -114,19 +114,19 @@ module RST
       # objects-array, PStore, database-connection,...
       # @abstract - Overwrite in descendants thus they initialize the store.
       def setup_backend
-        raise AbstractMethodCallError.new("Please override method :setup_backend in class #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
       # Make sure the current state of objects is stored
       # @abstract - Overwrite in descendants thus every object gets persistently stored.
       def sync_store
-        raise AbstractMethodCallError.new("Please override method :sync_store in class #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
       # @param [Object] object
       # @abstract - override in concrete StoreClasses
       def remove_object(object)
-        raise AbstractMethodCallError.new("Please, overrwrite #{__callee__} in #{self.class.to_s}")
+        raise AbstractMethodCallError.new
       end
 
     end
