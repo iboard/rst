@@ -3,6 +3,18 @@ require_relative 'lib/load'
 
 options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
 
+
+def ask prompt, allow
+  loop do
+    printf( "%s (%s):" % [prompt, "[#{allow.first}]#{allow[1..-1].join('/')}"])
+    answer = $stdin.gets
+    break answer.strip if allow.include?(answer.strip)
+    break allow.first if answer == "\n"
+    puts "Please answer #{allow.join('/')} or press Ctrl+C to abort"
+  end
+end
+
+
 # Application Tasks
 task :default => 'test'
 
@@ -35,8 +47,22 @@ end
 
 desc 'Build GEM'
 task :build do
-  Rake::Task['doc'].execute
   system 'gem build rubyshelltools.gemspec'
+end
+
+desc 'Deploy (all, and to RubyGems.org)'
+task :deploy do
+  Rake::Task['test'].execute
+  system 'git', 'status'
+  if ask('Are you sure everything is green?', %W(y n)) == 'y'
+    Rake::Task['build'].execute
+    Rake::Task['doc_deploy'].execute
+    system 'git', 'push', 'origin'
+    system 'git', 'push', 'github'
+    system 'gem', 'push' "rubyshelltools-#{RST::VERSION}.gem"
+  else
+    puts "see you later!"
+  end
 end
 
 desc 'Install GEM'
