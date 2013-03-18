@@ -12,6 +12,10 @@ module RST
     end
 
     private
+
+    # Output the filename and line of a backtrace-step
+    # @param [Array] - one caller_location-line
+    # @return [String]
     def format_backtrace(l)
       "%s in %s:%d" % [l[0].label,File.basename(l[0].path),l[0].lineno]
     end
