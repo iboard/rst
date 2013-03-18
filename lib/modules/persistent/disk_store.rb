@@ -56,8 +56,15 @@ module RST
           s[object.id] = object
         end
       end
-     
+
       private
+
+      # @param [Object] object - the object to be removed.
+      def remove_object(object)
+        @store.transaction do |s|
+          s.delete(object.id)
+        end
+      end
 
       # Initialize a PStore-instance
       # @see store_path
@@ -75,10 +82,16 @@ module RST
       #
       #     ~/.rst-data/development/store.data
       # 
-      # if no environment-variables defined, the defaulsts will be STOREPATH and 'development'
+      # if no environment-variables defined, the defaults will be STOREPATH and 'development'
       # @see STOREPATH
       # @return [String] 
       def store_path
+        @store_path ||= build_store_path
+      end
+
+      # build the path from ENV-vars and create the directory
+      # if necessary
+      def build_store_path
         prefix = ENV['RST_DATA'] || RST::STOREPATH
         env = ENV['RST_ENV'] || 'development'
         _dir = File.join( prefix, env )
@@ -86,12 +99,6 @@ module RST
         File.join(_dir, filename)
       end
 
-      # @param [Object] object - the object to be removed.
-      def remove_object(object)
-        @store.transaction do |s|
-          s.delete(object.id)
-        end
-      end
     end
 
   end
