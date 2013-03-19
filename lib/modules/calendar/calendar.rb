@@ -68,7 +68,7 @@ module RST
       include Persistent::Persistentable
       include CalendarHelper
 
-      @group public api
+      # @group public api
 
       attr_reader :name, :start_date, :end_date, :events
    
