@@ -13,4 +13,13 @@ describe "Ruby core-extensions" do
       1.year.should   == 365.25.days
     end
   end
+
+  describe String do
+    it 'should respond to blank?' do
+      "".should be_blank
+      "  ".should be_blank
+      "\t".should be_blank
+      "x".should_not be_blank
+    end
+  end
 end

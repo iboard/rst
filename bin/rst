@@ -8,4 +8,5 @@ include RST
 
 
 # Run rst from commandline
-puts RstCommand.new(ARGV).run
+output = RstCommand.new(ARGV).run
+puts output unless output.blank?
