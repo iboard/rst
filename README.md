@@ -66,6 +66,54 @@ it in your browser.
 
 The latest version is online at my [DAV-server][] too.
 
+Browsing the code
+-----------------
+
+  **modules**
+  
+ Modules are the core of this project. Within the directory
+ `lib/modules` you'll find
+
+     * calendar           # Everything about Calendars 
+       * calendar         # The Calendar-module and -class
+       * eventable        # Eventable API (module to make a class an event)
+       * calendar_event   # CalendarEvent-class
+      
+     * persistent         # Make things persistent
+       * persistent       # The Persistent-Module defines Persistentable/API
+       * store            # The abstract Store-class
+       * memory_store     # Store-descendant for a non-persistent memory-store
+       * disk_store       # Store-descendant using ruby-PStore to save to disk
+
+
+  **command-line implementation**
+  
+     * ./rst.rb           # Defines global Constants and the Logger
+     * ./lib/rst.rb       # Defines the class RstCommand used for the
+                          #   command-line-implementation
+     * ./lib/load.rb      # requires all necessary files
+                          #   used by bin/rst and spec/spec_helper.rb
+     * ./bin/rst          # Loads the library and instantiates a
+                          #   RstCommand-object
+
+  **RstCommand**
+
+Can handle two commands by now: 
+
+_ls_, 
+  the directory-listing, is coded
+inline and does a simple Dir for the given wildcards.
+
+_print_calendar_,
+  opens the calendar-file (all calendars are stored in one file) and acts on the calendar 
+named by the --name parameter. It uses _DiskStore_ to make the calendars
+persistent.
+
+      cal = find_calendar( Persistent::DiskStore.new(CALENDAR_FILE) )
+      cal.list_days(options[:from], options[:to], options[:show_empty]).compact.join("\n")
+  
+
+
 TDD
 ---
 
@@ -102,7 +150,7 @@ Copyright
 [RubyGems.org]: https://rubygems.org/gems/rubyshelltools
 [coverage output]: http://dav.iboard.cc/container/rst-coverage
 [Github]: https://github.com/iboard/rst
-[EXAMPLES at Github]: https://github.com/iboard/rst/blob/master/assets/docs/examples.md#examples
+[EXAMPLES on Github]: https://github.com/iboard/rst/blob/master/assets/docs/examples.md#examples
 [DAV-Server]: http://dav.iboard.cc/container/rst-doc
 [talk about nodoc]: http://www.youtube.com/watch?v=tCw7CpRvYOE
 [Martin's code]: https://github.com/snusnu
