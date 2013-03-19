@@ -119,7 +119,7 @@ TDD
 
 And as always we are **green**
 
-You can find the current [coverage output][] (generated with [simplecov][])
+Here you can find the current [coverage output][] (generated with [simplecov][])
 
 Running `rake` and `yard` from the project-directory the output should include
 the following lines ...

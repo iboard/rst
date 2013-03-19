@@ -68,6 +68,8 @@ module RST
       include Persistent::Persistentable
       include CalendarHelper
 
+      @group public api
+
       attr_reader :name, :start_date, :end_date, :events
    
       # @param [String] _name Name and persistent-id of this calendar.
@@ -129,7 +131,6 @@ module RST
       end
       
   
-      private
       # All events on the given date
       # @param [Date] date 
       # @return [Array] of [CalendarEvents]
@@ -137,12 +138,10 @@ module RST
         events.select { |event| event.event_date == date }
       end
       
-      # Convert strings to a date
-      # @param [Date|Time|String] param - default is 'today'
-      # @return [Date|Time]
-      def parse_date_param(param=Date.today)
-        ensure_date(param)
-      end
+      # @endgroup
+
+      private
+      # @group private api
 
       # Output date and Events on this date in one line
       # @param [Date] _date
@@ -161,6 +160,15 @@ module RST
         events_on(_date).map(&:event_headline).join(' + ').strip
       end
   
+      # @endgroup 
+
+      # Convert strings to a date
+      # @param [Date|Time|String] param - default is 'today'
+      # @return [Date|Time]
+      def parse_date_param(param=Date.today)
+        ensure_date(param)
+      end
+
     end
 
   end
