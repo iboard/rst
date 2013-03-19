@@ -48,7 +48,7 @@ Usage
 
 see file EXAMPLES.md:
 
- * [EXAMPLES at Github][]
+ * [EXAMPLES on Github][]
  * [loacal copy](./file.examples.html)
  
 or run
@@ -71,7 +71,7 @@ TDD
 
 And as always we are **green**
 
-You can find the current [coverage output] (generated with [simplecov][])
+You can find the current [coverage output][] (generated with [simplecov][])
 
 Running `rake` and `yard` from the project-directory the output should include
 the following lines ...

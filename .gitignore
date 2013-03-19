@@ -3,5 +3,6 @@ doc/
 data/
 coverage/
 NERD_*
+TAGS
 rst-0*gem
 rubyshelltools-0*gem
