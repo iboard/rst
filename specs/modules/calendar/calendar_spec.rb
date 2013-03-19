@@ -28,6 +28,12 @@ describe 'Calendar module:' do
       calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Wed, Sep 02 1964/
     end
 
+    it 'should display lines with entries if empty==true (bugfix)' do
+      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
+      calendar << Calendar::CalendarEvent.new('31.8.1964', 'Andi Altendorfer')
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964: Andi Altendorfer/
+    end
+
     it 'should interpret today as argument' do
       calendar = Calendar::Calendar.new('dob','1.1.1970', 'today')
       calendar.end_date.should == Date.today

@@ -149,7 +149,7 @@ module RST
       # @param [Boolean] show_empty - do output lines with no events
       # @return [String]
       def format_events_for(_date,show_empty=false)
-        if show_empty || (_line=event_headlines_for(_date)) != ''
+        if  (_line=event_headlines_for(_date)) != '' || show_empty
           "%s: %s" % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
         end
       end
