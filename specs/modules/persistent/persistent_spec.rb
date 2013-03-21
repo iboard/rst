@@ -3,6 +3,7 @@ require 'ostruct'
 
 describe Persistent do
 
+  # Some class to test with Persistentable API
   class Something < Struct.new :name
     include Persistent::Persistentable
   end
@@ -14,11 +15,11 @@ describe Persistent do
     end
 
     describe 'if setup_store is overwritten but no other abstract method' do
-      before do
-        class Dummy < Persistent::Store
-          def setup_backend
-            @objects = []
-          end
+
+      # define a dummy-store
+      class Dummy < Persistent::Store
+        def setup_backend
+          @objects = []
         end
       end
 
@@ -130,11 +131,11 @@ describe Persistent do
   end
 
   describe 'DiskStore' do
-     
+
     before do
       @store = Persistent::DiskStore.new('hardstore.data')
     end
-    
+
     it '.delete! should remove the file' do
       @store << OpenStruct.new(id: 'Hello')
       File.exist?(@store.path).should be_true
@@ -182,7 +183,6 @@ describe Persistent do
       end
     end
 
-
     describe 'in a MemoryStore' do
 
       before do
@@ -228,8 +228,10 @@ describe Persistent do
         object.delete
         @disk.find(object.id).should be_nil
       end
+
     end
 
   end
 
 end
+
