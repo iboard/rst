@@ -119,7 +119,7 @@ TDD
 
 And as always we are **green**
 
-Here you can find the current [coverage output][] (generated with [simplecov][])
+See the current [coverage output][] (generated with [simplecov][])
 
 Running `rake` and `yard` from the project-directory the output should include
 the following lines ...
@@ -129,6 +129,12 @@ the following lines ...
     Coverage report generated for RSpec to rst/coverage. _n_ / _n+-0_ LOC (**100.0%**) covered.
     **100.00% documented**
 
+To run specs you can use rake-tasks
+
+    rake [test]      # Run Module-specs w/o command-line calls (default)
+    rake all         # Run all tests including specs/commands
+    rake commands    # Run command-specs only (slower because of system-calls)
+    rake modules     # Run module-specs only
 
 License
 =======
