@@ -91,6 +91,7 @@ module RST
 
       # build the path from ENV-vars and create the directory
       # if necessary
+      # @return [String] full path of data-file for current environment
       def build_store_path
         prefix = ENV['RST_DATA'] || RST::STOREPATH
         env = ENV['RST_ENV'] || 'development'
