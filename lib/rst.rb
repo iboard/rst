@@ -42,6 +42,7 @@ module RST
     # Initialize the Command-runner with arguments and parse them.
     def initialize(args)
       parse_options(args)
+      @command, @files = args.shift, args
     end
 
     # Call 'run_options' and 'run_command', reject empty returns and join
@@ -140,11 +141,12 @@ module RST
     # @see #command
     # @return [String]
     def run_command
-      case @command=ARGV.shift
+      case @command
       when nil, 'nil', 'null'
         ''
       when 'ls'
-        directory_listing(ARGV.empty? ? ['*'] : ARGV)
+        @files << '*' if @files.empty?
+        directory_listing( @files )
       when 'cal', 'calendar'
         print_calendar
       else
@@ -240,7 +242,7 @@ module RST
       puts "Binary : #{$0}"
       puts "Command: #{command}"
       puts "Options: #{options.map(&:inspect).join(', ')}"
-      puts "Files  : #{ARGV.any? ? ARGV[1..-1].join(', ') : ''}"
+      puts "Files  : #{@files.join(', ')}"
     end
 
     # @group HELPERS

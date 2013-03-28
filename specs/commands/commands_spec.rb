@@ -8,7 +8,7 @@ describe 'Command-line arguments' do
     got = run_shell("bin/rst ls --verbose Gemfile Rakefile README.*")
     got.should == <<-EOT
     Binary : bin/rst
-    Command: 
+    Command: ls
     Options: [:name, "unnamed"], [:from, "today"], [:to, "today"], [:show_empty, false], [:verbose, true]
     Files  : Gemfile, Rakefile, README.md
     Gemfile	Rakefile	README.md
