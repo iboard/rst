@@ -71,11 +71,13 @@ overwrite this by defining env-vars for RST_DATA and RST_ENV
     
     $ export RST_DATA=$HOME/.rst/data
     $ export RST_ENV=production
+    
     $ rst cal --new-event='1964-08-31,Birthday Andreas Altendorfer'
     $ rst cal -e 'today,Win the jackpot'  # e is an abbreviation for --new-event
     $ rst cal -f 1964/1                   # f is an abbreviation for --from
     Mon, Aug 31 1964: Birthday Andreas Altendorfer
     Fri, Mar 15 2013: Win the jackpot
+    
     $ find $HOME/.rst
     /Users/you/.rst
     /Users/you/.rst/data
@@ -86,6 +88,8 @@ overwrite this by defining env-vars for RST_DATA and RST_ENV
     birthdays           : 5 entries
     work                : 2 entries
     
+    $ rst -e 1w,Some Event  # entered on Tue, Jan 01 2013
+    Added: Tue, Jan 08 2013: Some Event 
 
 The full set of parameters is
 
