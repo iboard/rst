@@ -90,3 +90,21 @@ The full set of parameters is
 * --empty ...... show empty lines
 * --no-empty ... show no empty lines (default)
 
+
+Save defaults
+=============
+
+You can save options with `--save-defaults` and then cal rst without
+options to execute it with command and saved-options 
+
+    $ rst calendar --from '1964-01-01' --to today --save-defaults
+    Defaults Saved
+    Mon, Aug 31 1964: Birthday Andreas Altendorfer
+    
+    $ rst
+    Mon, Aug 31 1964: Birthday Andreas Altendorfer
+
+You can delete saved options with `--clear-defaults` or list saved
+options with `--list-defaults`
+
+

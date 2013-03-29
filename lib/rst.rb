@@ -1,5 +1,6 @@
 require 'optparse'
 require 'ostruct'
+require_relative './modules/persistent/persistent'
 
 # # Ruby Shell Tools main namespace RST
 #
@@ -41,8 +42,10 @@ module RST
 
     # Initialize the Command-runner with arguments and parse them.
     def initialize(args)
+      load_defaults
       parse_options(args)
-      @command, @files = args.shift, args
+      @command ||= args.shift
+      @files = args
     end
 
     # Call 'run_options' and 'run_command', reject empty returns and join
@@ -63,7 +66,6 @@ module RST
     # @see #run_options
     # @see #run_option
     def parse_options(args)
-      @options = DEFAULT_OPTIONS
       OptionParser.new do |opts|
         opts.banner = 'Usage: rst [COMMAND [COMMAND ....]] [options] [FILES..]'
 
@@ -107,6 +109,18 @@ module RST
 
         opts.on('--[no-]empty', 'Show empty entries') do |show|
           @options[:show_empty] = show
+        end
+
+        opts.on('--save-defaults', 'Save given params as defaults') do |v|
+          @options[:save_defaults] = v
+        end
+
+        opts.on('--list-defaults', 'list saved defaults') do |v|
+          @options[:list_defaults] = v
+        end
+
+        opts.on('--clear-defaults', 'Save given params as defaults') do |v|
+          @options[:clear_defaults] = v
         end
 
         opts.separator 'Commands:'
@@ -198,6 +212,12 @@ module RST
         list_calendars
       when 'delete_calendar'
         delete_calendar
+      when 'save_defaults'
+        save_defaults
+      when 'list_defaults'
+        list_defaults
+      when 'clear_defaults'
+        clear_defaults
       else
         nil #noop ignore unknown options likely it's a param for an argument
       end
@@ -276,6 +296,47 @@ module RST
       end
     end
 
+    # Save the given command and options as defaults
+    def save_defaults
+      store = Persistent::DiskStore.new('defaults')
+      options.delete(:save_defaults)
+      defaults = Defaults.new( command, options )
+      store << defaults
+      "Defaults saved"
+    end
+
+    # Load Defaults
+    def load_defaults
+      @options||=DEFAULT_OPTIONS
+      store = Persistent::DiskStore.new('defaults')
+      _defaults = store.find('defaults')
+      if _defaults
+        @command = _defaults.command
+        @options.merge! _defaults.options
+      end
+    end
+
+    # List saved defaults
+    def list_defaults
+      store = Persistent::DiskStore.new('defaults')
+      defaults = store.find('defaults')
+      "Command: #{defaults.command}\nOptions:\n#{list_options(defaults.options)}" if defaults
+    end
+
+    # delete saved defaults
+    def clear_defaults
+      store = Persistent::DiskStore.new('defaults')
+      store.delete!
+    end
+
+    # print options
+    # @param [Hash] _options
+    def list_options(_options)
+      _options.map { |_o|
+        "--#{_o[0]} #{_o[1]}"
+      }.join("\n")
+    end
+
   end
 
   # @group HELPER CLASSES
@@ -290,6 +351,26 @@ module RST
   # @api private
   # @see RstCommand#get_event_options
   class EventOptions < Struct.new(:date,:label,:calendar_name,)
+  end
+
+  # Defaults Store
+  # @api private
+  class Defaults
+    include Persistent::Persistentable
+
+    attr_reader :command
+    attr_reader :options
+
+    def id
+      'defaults'
+    end
+
+    # @param [String] command
+    # @param [Hash] options
+    def initialize(command,options)
+      @command = command
+      @options = options
+    end
   end
 
 

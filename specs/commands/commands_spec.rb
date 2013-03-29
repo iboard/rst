@@ -67,4 +67,18 @@ describe 'Command-line arguments' do
     got.should == "unnamed             : 1 entry\nBirthdays           : 2 entries\nWeddings            : 1 entry"
   end
 
+  it 'should save defaults with --save-defaults' do
+    got = run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
+    got.should == 'Defaults saved'
+    got = run_shell('bin/rst --list-defaults')
+    got.should == "Command: cal\nOptions:\n--name unnamed\n--from 1.1.2013\n--to 31.1.2013\n--show_empty false"
+    got = run_shell('bin/rst --verbose').should == <<-EOT
+      Binary : bin/rst
+      Command: cal
+      Options: [:name, \"unnamed\"], [:from, \"1.1.2013\"], [:to, \"31.1.2013\"], [:show_empty, false], [:verbose, true]
+      Files  :
+    EOT
+    .gsub(/^      /,'').strip
+  end
+
 end
