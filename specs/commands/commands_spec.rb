@@ -81,4 +81,9 @@ describe 'Command-line arguments' do
     .gsub(/^      /,'').strip
   end
 
+  it 'should overwrite default command if command is given' do
+    run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
+    run_shell("bin/rst ls").should =~ /Gemfile/
+  end
+
 end

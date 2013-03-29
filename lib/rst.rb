@@ -44,7 +44,8 @@ module RST
     def initialize(args)
       load_defaults
       parse_options(args)
-      @command ||= args.shift
+      _command = args.shift
+      @command = _command if _command
       @files = args
     end
 
@@ -67,7 +68,7 @@ module RST
     # @see #run_option
     def parse_options(args)
       OptionParser.new do |opts|
-        opts.banner = 'Usage: rst [COMMAND [COMMAND ....]] [options] [FILES..]'
+        opts.banner = 'Usage: rst [COMMAND] [options] [FILES..]'
 
         opts.separator "\nOptions:"
 
@@ -119,7 +120,7 @@ module RST
           @options[:list_defaults] = v
         end
 
-        opts.on('--clear-defaults', 'Save given params as defaults') do |v|
+        opts.on('--clear-defaults', 'delete previously saved defaults') do |v|
           @options[:clear_defaults] = v
         end
 
