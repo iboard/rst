@@ -128,20 +128,25 @@ module RST
           @options[:clear_defaults] = v
         end
 
+        opts.separator ''
         opts.separator 'Commands:'
 
         opts.separator <<-EOT
           nil .......... no command. Interpret options only (useful in combination with -v)
           ls ........... list directory and files
           cal[endar] ... print a calendar --from --to
+        EOT
+        .gsub(/^\s+/,'    ')
 
-          DATE-FORMATS FOR --new-event
-          ommit ........ today
+        opts.separator ''
+        opts.separator 'DATE-FORMATS FOR --new-event:'
+        opts.separator <<-EOT
+          omitted....... today
           today ........ today
+          nDWM ......... today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
           yyyy-mm-dd
           dd.mm.yyyy
           mm/dd/yyyy
-          nDWM ......... today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
         EOT
         .gsub(/^\s+/,'    ')
 

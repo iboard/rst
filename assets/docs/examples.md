@@ -7,7 +7,7 @@ rst --help
 Print out available options and commands
   
     $ rst --help
-    Usage: rst [COMMAND [COMMAND ....]] [options] [FILES..]
+    Usage: rst [COMMAND] [options] [FILES..]
 
     Options:
         -v, --[no-]verbose               Run verbosely
@@ -16,15 +16,27 @@ Print out available options and commands
         -f, --from DATE                  Set from-date
         -t, --to DATE                    Set to-date
         -n, --name NAME                  Use this name for the command
-        -e, --new-event DATE,STRING      Add an event
+        -e, --new-event [DATE,]STRING    Add an event
             --list-calendars             List available calendars
             --delete-calendar CALENDARNAME
                                          Delete an calendar and all it's entries!
             --[no-]empty                 Show empty entries
+            --save-defaults              Save given params as defaults
+            --list-defaults              list saved defaults
+            --clear-defaults             delete previously saved defaults
+
     Commands:
         nil .......... no command. Interpret options only (useful in combination with -v)
         ls ........... list directory and files
         cal[endar] ... print a calendar --from --to
+
+    DATE-FORMATS FOR --new-event:
+        omitted....... today
+        today ........ today
+        nDWM ......... today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
+        yyyy-mm-dd
+        dd.mm.yyyy
+        mm/dd/yyyy
 
         use --example for a more detailed list of commands.
 
