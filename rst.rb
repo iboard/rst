@@ -3,7 +3,7 @@ require 'logger'
 # # Ruby Shell Tools Top-level file
 module RST
   # Gem-version
-  VERSION   = '0.0.3'
+  VERSION   = '0.0.4'
 
   # Path to the docs used by the software
   DOCS      = File.expand_path('../assets/docs', __FILE__)
