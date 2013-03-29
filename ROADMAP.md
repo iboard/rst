@@ -6,8 +6,8 @@ Review args for calendar
 
 **What will be the best behavior to use it from the command-line?**
   
-        rst cal -e "Some Text"  .... should create an entry for today
-        rst cal -e 1w .............. should create an entry for today+1week
+        ✔ rst cal -e "Some Text"  .... should create an entry for today
+        ✔ rst cal -e 1w .............. should create an entry for today+1week
         rst cal -e mon ............. should create an entry for next Monday
         rst cal -e when ............ without text should open $editor (as git commit)
                         ............ should -e be a default? (may be

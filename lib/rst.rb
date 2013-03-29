@@ -96,7 +96,11 @@ module RST
           @options[:name] = name
         end
 
-        opts.on('-e', '--new-event DATE,STRING', Array, 'Add an event') do |date,name|
+        opts.on('-e', '--new-event [DATE,]STRING', Array, 'Add an event') do |date,name|
+          if name.nil?
+            name = date
+            date = Date.today
+          end
           @options[:new_event] = {date: date, label: name}
         end
 
@@ -130,6 +134,14 @@ module RST
           nil .......... no command. Interpret options only (useful in combination with -v)
           ls ........... list directory and files
           cal[endar] ... print a calendar --from --to
+
+          DATE-FORMATS FOR --new-event
+          ommit ........ today
+          today ........ today
+          yyyy-mm-dd
+          dd.mm.yyyy
+          mm/dd/yyyy
+          nDWM ......... today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
         EOT
         .gsub(/^\s+/,'    ')
 

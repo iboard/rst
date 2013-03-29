@@ -50,6 +50,18 @@ describe 'Command-line arguments' do
     got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
+  it 'should assume today if no date is given' do
+    today = Time.now
+    run_shell('bin/rst --new-event=Hello').strip.should == "Added: #{today.strftime(DEFAULT_DATE_FORMAT)}: Hello"
+  end
+
+  it 'should interpret 1w as today+1.week' do
+    today = Time.now
+    due   = today+1.week
+    got = run_shell('bin/rst -e 1w,Hello').strip
+    got.should == "Added: #{due.strftime(DEFAULT_DATE_FORMAT)}: Hello"
+  end
+
   it 'should delete a calendar' do
     run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
@@ -60,11 +72,13 @@ describe 'Command-line arguments' do
   end
 
   it 'should list calendars' do
+    clear_data_path
+    run_shell('bin/rst cal --delete-calendar=unnamed')
     run_shell('bin/rst cal --delete-calendar=Birthdays --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     run_shell('bin/rst cal --name=Birthdays --new-event="1969-08-28,Heidis Birthday"')
     run_shell('bin/rst cal --name=Weddings --new-event="1991-12-28,Andi+Heidi"')
     got = run_shell('bin/rst --list-calendars')
-    got.should == "unnamed             : 1 entry\nBirthdays           : 2 entries\nWeddings            : 1 entry"
+    got.should == "Birthdays           : 2 entries\nWeddings            : 1 entry"
   end
 
   it 'should save defaults with --save-defaults' do

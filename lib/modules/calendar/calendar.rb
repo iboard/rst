@@ -51,9 +51,30 @@ module RST
           param
         elsif param =~ /today/i || param.nil?
           Date.today 
-        else
+        elsif param =~ /\d+[wmd]/i
+          get_today_plus(param)
+        else 
           Date.parse(param)
         end
+      end
+
+      # Get Today + param
+      # @param [String] param nDWM n=Number Day Weeks Months
+      def get_today_plus(param)
+        offset = 0
+        param.scan(/(\d+)([dwm])/i) do |count,unit|
+          offset = case unit[0].downcase
+          when 'd'
+            count.to_i.days
+          when 'w'
+            count.to_i.weeks
+          when 'm'
+            count.to_i.months
+          else
+            raise "Unknown unit #{unit}. Valid units are d,w,m or days,weeks,months"
+          end
+        end
+        Date.parse( (Time.now + offset).to_s )
       end
     end
 
