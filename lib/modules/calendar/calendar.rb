@@ -51,7 +51,7 @@ module RST
           param
         elsif param =~ /today/i || param.nil?
           Date.today 
-        elsif param =~ /\d+[wmd]/i
+        elsif param =~ /\d+[a-zA-Z]/i
           get_today_plus(param)
         else 
           Date.parse(param)
@@ -62,7 +62,7 @@ module RST
       # @param [String] param nDWM n=Number Day Weeks Months
       def get_today_plus(param)
         offset = 0
-        param.scan(/(\d+)([dwm])/i) do |count,unit|
+        param.scan(/(\d+)([a-z])/i) do |count,unit|
           offset = case unit[0].downcase
           when 'd'
             count.to_i.days

@@ -46,6 +46,14 @@ describe 'Calendar module:' do
       cfrom.start_date == Date.today
     end
 
+    it 'shoul interpret -e 1w as today+1week' do
+      today = Date.today
+      Calendar::Calendar.new(nil,'1d').start_date.to_s.should == (today+1).to_s
+      Calendar::Calendar.new(nil,'1w').start_date.to_s.should == (today+7).to_s
+      Calendar::Calendar.new(nil,'1m').start_date.to_s.should == (today+30.5).to_s
+      expect { Calendar::CalendarEvent.new('1x','dummy') }.to raise_error RuntimeError
+    end
+
     it 'should have a setter method for :from, and :to' do
       cal = Calendar::Calendar.new('dob','1.1.1970', '2.1.1970')
       cal.start_date.year.should == 1970
@@ -122,6 +130,7 @@ describe 'Calendar module:' do
         @calendar.list_days.join("\n").should =~ /Wed, Jan 02 2013\: MEETING with Frank/
         @calendar.list_days.join("\n").should =~ /Sat, Jan 05 2013\: MEETING with Zappa/
       end
+
     end
   end
 
