@@ -50,7 +50,7 @@ describe 'Calendar module:' do
       today = Date.today
       Calendar::Calendar.new(nil,'1d').start_date.to_s.should == (today+1).to_s
       Calendar::Calendar.new(nil,'1w').start_date.to_s.should == (today+7).to_s
-      Calendar::Calendar.new(nil,'1m').start_date.to_s.should == (today+30.5).to_s
+      Calendar::Calendar.new(nil,'1m').start_date.month.should == (today+31).month
       expect { Calendar::CalendarEvent.new('1x','dummy') }.to raise_error RuntimeError
     end
 
