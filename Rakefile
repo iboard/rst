@@ -20,9 +20,6 @@ task :default => 'test'
 
 desc 'Run Module-specs w/o command-line calls'
 task :test do
-  puts 'ATTENTION: specs/commands are not executed.'
-  puts 'Run \'rake commands\' or \'rake all\' to execute them'
-  puts '-------------------------------------------------'
   system "rspec -f p #{options} specs/core_extensions specs/modules"
 end
 
