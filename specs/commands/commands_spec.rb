@@ -88,6 +88,21 @@ describe 'Command-line arguments' do
     got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]{8}) > Testentry/
   end
 
+  it '--delete-events should remove events from calendar' do
+    clear_data_path
+    store = Persistent::DiskStore.new(CALENDAR_FILE)
+    calendar = Calendar::Calendar.new('testcal')
+    event1 = Calendar::CalendarEvent.new( Date.today, 'Testentry0')
+    event2 = Calendar::CalendarEvent.new( Date.today, 'Testentry1')
+    calendar << event1
+    calendar << event2
+    store << calendar
+    run_shell("bin/rst cal -n testcal --delete-events=#{event1.id}")
+    calendar = store.find('testcal')
+    calendar.events.map(&:label).should include('Testentry1')
+    calendar.events.map(&:label).should_not include('Testentry0')
+  end
+
 
   it 'should save defaults with --save-defaults' do
     got = run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')

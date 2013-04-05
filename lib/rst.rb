@@ -112,6 +112,10 @@ module RST
           @options[:delete_calendar] = name
         end
 
+        opts.on('--delete-events ID[,ID,...]',Array, 'delete entries from calendar') do |ids|
+          @options[:delete_events] = ids
+        end
+
         opts.on('--[no-]empty', 'Show empty entries') do |show|
           @options[:show_empty] = show
         end
@@ -238,6 +242,8 @@ module RST
         list_calendars
       when 'dump'
         dump_calendar
+      when 'delete_events'
+        delete_events
       when 'delete_calendar'
         delete_calendar
       when 'save_defaults'
@@ -291,6 +297,16 @@ module RST
       store.all.map { |calendar|
         calendar.dump if calendar.name == @options[:name] || @options[:name].blank?
       }.compact.join("\n")
+    end
+
+    # Delete events with given IDs from calendar
+    # @example
+    #   rst -n calname --delete-ids=34a4,44b3
+    def delete_events
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      calendar = store.find(@options[:name])
+      calendar.events.reject!{|r| @options[:delete_events].include?(r.id)}
+      store << calendar
     end
 
     # Output the previous interpreted and parsed arguments
