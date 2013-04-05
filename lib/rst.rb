@@ -116,6 +116,10 @@ module RST
           @options[:show_empty] = show
         end
 
+        opts.on('-i', '--with-ids', 'List entries with ids') do |ids|
+          @options[:with_ids] = ids
+        end
+
         opts.on('--save-defaults', 'Save given params as defaults') do |v|
           @options[:save_defaults] = v
         end
@@ -208,7 +212,7 @@ module RST
     # @return [Array] - one string Date: Event + Event + ... for each day.
     def print_calendar
       cal = find_calendar( Persistent::DiskStore.new(CALENDAR_FILE) )
-      cal.list_days(options[:from], options[:to], options[:show_empty]).compact.join("\n")
+      cal.list_days(options[:from], options[:to], options[:show_empty], options[:with_ids]).compact.join("\n")
     end
 
     # @group EXECUTE ACTION FROM OPTIONS

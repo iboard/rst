@@ -47,6 +47,14 @@ module RST
         self.inspect
       end
 
+      unless defined?(self.id)
+        # define an id-method if not exists yet
+        # @return [String] - a 4digit hex-string.
+        def id
+          @id ||= SecureRandom::hex(EVENT_HEX_ID_LENGTH)
+        end
+      end
+
     end
   end
 end

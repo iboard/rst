@@ -81,6 +81,13 @@ describe 'Command-line arguments' do
     got.should == "Birthdays           : 2 entries\nWeddings            : 1 entry"
   end
 
+  it 'should list events with ids' do
+    clear_data_path
+    run_shell('bin/rst cal --new-event="today,Testentry"')
+    got = run_shell('bin/rst cal --with-ids')
+    got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]{8}) > Testentry/
+  end
+
   it 'should save defaults with --save-defaults' do
     got = run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
     got.should == 'Defaults saved'

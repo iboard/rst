@@ -16,4 +16,8 @@ describe Calendar::CalendarEvent do
     @event.event_headline.should == 'Geburtstag Andi'
   end
 
+  it 'should generate an id if no id-method defined yet' do
+    @event.id.should =~ /[a-f0-9]{4}/
+  end
+
 end

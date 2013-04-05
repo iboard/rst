@@ -131,6 +131,13 @@ describe 'Calendar module:' do
         @calendar.list_days.join("\n").should =~ /Sat, Jan 05 2013\: MEETING with Zappa/
       end
 
+      it 'should list events with ids for Persistentable objects' do
+        TestMeeting.send(:include, RST::Persistent::Persistentable)
+        meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
+        @calendar << meeting
+        @calendar.list_days(nil,nil,false,true).first.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]*) > MEETING with MyMeeting/
+      end
+
     end
   end
 

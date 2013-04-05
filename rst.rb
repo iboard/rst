@@ -15,6 +15,10 @@ module RST
   # @see Persistent::DiskStore
   DEFAULT_STORE_FILENAME = 'rst_data.pstore'
 
+  # The length of an Eventable's id.
+  # @see Calendar::Eventable.id
+  EVENT_HEX_ID_LENGTH = 4
+
   # intialize the logger
   # @example Usage
   #   RST.logger.info('This will output to STDERR')

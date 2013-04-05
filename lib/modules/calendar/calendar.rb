@@ -145,9 +145,9 @@ module RST
       # @param [String|Date] end_on   - output ends on this day
       # @param [Boolean] show_empty   - output days with no events
       # @return [Array] of Strings DATE: EVENT + EVENT + ....
-      def list_days(start_on=start_date,end_on=end_date,show_empty=false)
+      def list_days(start_on=start_date,end_on=end_date,show_empty=false,show_ids=false)
         (parse_date_param(start_on)..parse_date_param(end_on)).to_a.map { |_date|
-          format_events_for(_date,show_empty)
+          format_events_for(_date,show_empty,show_ids)
         }.compact
       end
       
@@ -158,7 +158,7 @@ module RST
       def events_on(date)
         events.select { |event| event.event_date == date }
       end
-      
+
       # @endgroup
 
       private
@@ -168,17 +168,25 @@ module RST
       # @param [Date] _date
       # @param [Boolean] show_empty - do output lines with no events
       # @return [String]
-      def format_events_for(_date,show_empty=false)
-        if  (_line=event_headlines_for(_date)) != '' || show_empty
-          "%s: %s" % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
+      # @param [Boolean] show_ids - output ids for events
+      def format_events_for(_date,show_empty=false,show_ids=false)
+        if  (_line=event_headlines_for(_date,show_ids)) != '' || show_empty
+          (show_ids ? "%s:\n  %s" : "%s: %s") % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
         end
       end
 
       # Concatenate headlines of all events on this date
       # @param [Date] _date
+      # @param [Boolean] _show_ids
       # @return [String]
-      def event_headlines_for(_date)
-        events_on(_date).map(&:event_headline).join(' + ').strip
+      def event_headlines_for(_date,_show_ids=false)
+        if !_show_ids
+          events_on(_date).map(&:event_headline).join(' + ').strip
+        else
+          events_on(_date).map{|e|
+            "%s > %s" % [e.respond_to?(:id) ? e.id : 'n/a' ,e.event_headline]
+          }.join("\n  ").strip
+        end
       end
   
       # @endgroup 
