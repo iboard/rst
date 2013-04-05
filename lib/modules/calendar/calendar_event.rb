@@ -20,7 +20,7 @@ module RST
     #
     class CalendarEvent 
 
-      attr_reader :event_date, :label
+      attr_reader :event_date, :label, :id
 
       include Eventable
       include CalendarHelper
@@ -29,6 +29,7 @@ module RST
       # @param [String] _label - Events name
       def initialize(_date,_label)
         @label = _label
+        @id ||= SecureRandom::hex(4)
         schedule! ensure_date(_date)
       end
 

@@ -39,7 +39,7 @@ describe 'Calendar module:' do
       calendar.end_date.should == Date.today
     end
 
-    it 'should default to ´today´ if one date is missing' do
+    it 'should default to \'today\' if one date is missing' do
       cend  = Calendar::Calendar.new('dob','today')
       cfrom = Calendar::Calendar.new('dob',nil,'today')
       cend.end_date    == Date.today
@@ -136,6 +136,12 @@ describe 'Calendar module:' do
         meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
         @calendar << meeting
         @calendar.list_days(nil,nil,false,true).first.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]*) > MEETING with MyMeeting/
+      end
+
+      it '.dump calendar-events' do
+        meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
+        @calendar << meeting
+        @calendar.dump.should =~ /#{Date.today.strftime('%Y-%m-%d')},MEETING with MyMeeting/
       end
 
     end

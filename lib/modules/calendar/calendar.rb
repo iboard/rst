@@ -159,6 +159,15 @@ module RST
         events.select { |event| event.event_date == date }
       end
 
+
+      # Dump calendar events
+      # @return [String]
+      def dump
+        events.map { |event|
+          '"%s,%s"' % [ event.event_date.strftime('%Y-%m-%d'), event.event_headline ]
+        }.join("\n")
+      end
+
       # @endgroup
 
       private

@@ -120,6 +120,10 @@ module RST
           @options[:with_ids] = ids
         end
 
+        opts.on('-d', '--dump', 'Dump calendar-events' ) do |d|
+          @options[:dump] = d
+        end
+
         opts.on('--save-defaults', 'Save given params as defaults') do |v|
           @options[:save_defaults] = v
         end
@@ -232,6 +236,8 @@ module RST
         "Added: %s: %s" % [new_event.event_date.strftime(DEFAULT_DATE_FORMAT), new_event.event_headline.strip]
       when 'list_calendars'
         list_calendars
+      when 'dump'
+        dump_calendar
       when 'delete_calendar'
         delete_calendar
       when 'save_defaults'
@@ -274,6 +280,17 @@ module RST
         cnt = calendar.events.count
         "%-20.20s: %d %s" % [calendar.id, cnt > 0 ? cnt : 'no', cnt > 1 ? 'entries' : 'entry']
       }
+    end
+
+    # Dump the calendar(s), thus the output can be used as input for -e again
+    # if no name-param is given all calendars are dumped.
+    # if name-param is given only the named calendar gets dumped.
+    # @return [String]
+    def dump_calendar
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      store.all.map { |calendar|
+        calendar.dump if calendar.name == @options[:name] || @options[:name].blank?
+      }.compact.join("\n")
     end
 
     # Output the previous interpreted and parsed arguments

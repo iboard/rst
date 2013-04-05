@@ -12,7 +12,7 @@ describe Calendar::CalendarEvent do
     @event.event_date.should == Date.new(1964,8,31)
   end
 
-  it 'should output the label as event´s headline' do
+  it 'should output the label as event\'s headline' do
     @event.event_headline.should == 'Geburtstag Andi'
   end
 
