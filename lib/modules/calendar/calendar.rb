@@ -177,17 +177,14 @@ module RST
       # events within given date-range
       # @param [String|Date] from - Start on date
       # @param [String|Date] to - End on date
-      # @return [String]
+      # @param [Boolean] empty - show empty lines (dates without events)
+      # @param [Boolean] ids - show ids of each event
+      # @return [String]|nil
       def to_text(from,to,empty=false,ids=false)
         unless (_content=list_days(from,to)).empty?
           left_column=build_cal(ensure_date(from),ensure_date(to))
           right_column=("EVENTS:\n"+list_days(from,to,empty,ids).join("\n")).split(/\n/)
-          rows = [] 
-          source = left_column.count > right_column.count ? left_column : right_column
-          source.each_with_index do |_r,idx|
-            rows << "%-22.22s %s " % [ left_column[idx].to_s+"     ", right_column[idx].to_s ]
-          end
-          rows.join("\n").gsub(/\s*$/,'')
+          render_2col_lines(left_column, right_column)
         end
       end
       # @endgroup
@@ -195,6 +192,39 @@ module RST
       private
       # @group private api
 
+      # Format a 2 column text-output
+      # @example
+      #
+      #       $ bin/rst -p
+      #       work
+      #            April 2013        EVENTS:
+      #       Su Mo Tu We Th Fr Sa   Wed, Apr 24 2013: RailsConf2013 7h Abflug München + TÜV-Audit
+      #           1  2  3  4  5  6   Mon, Apr 29 2013: RailsConf2013
+      #        7  8  9 10 11 12 13   Tue, Apr 30 2013: RailsConf2013
+      #       14 15 16 17 18 19 20   Wed, May 01 2013: RailsConf2013
+      #       21 22 23 24 25 26 27   Thu, May 02 2013: RailsConf2013
+      #       28 29 30               Fri, May 03 2013: RailsConf2013
+      #                              Sat, May 04 2013: RailsConf2013 Ankunft München
+      #                              Mon, May 06 2013: Prüfung Romy
+      #            May 2013
+      #       Su Mo Tu We Th Fr Sa
+      #       1  2  3  4
+      #       5  6  7  8  9 10 11
+      #       12 13 14 15 16 17 18
+      #       19 20 21 22 23 24 25
+      #       26 27 28 29 30 31V
+      #
+      # @param [Array] left - lines for the left column
+      # @param [Array] right - lines for the right column
+      # @return [String] - 2 column text-lines
+      def render_2col_lines(left,right)
+        source = left.count > right.count ? left : right
+        rows = []
+        source.each_with_index do |_r,idx|
+          rows << "%-22.22s %s " % [ left[idx].to_s+"     ", right[idx].to_s ]
+        end
+        rows.join("\n").gsub(/\s*$/,'')
+      end
 
       # Uses OS'cal-command to format a small calendar for a given month
       # @param [Date|String] from - start on date
@@ -205,6 +235,7 @@ module RST
           `cal #{m} #{y}`
         }.join("\n").split(/\n/)
       end
+
       # Output date and Events on this date in one line
       # @param [Date] _date
       # @param [Boolean] show_empty - do output lines with no events
