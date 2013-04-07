@@ -106,6 +106,15 @@ The full set of parameters is
 * --empty ...... show empty lines
 * --no-empty ... show no empty lines (default)
 
+List entries with IDs and delete by ID
+--------------------------------------
+
+    $ rst cal -i
+    Sun, Mar 31 2013:
+      e5e14e59 > Your Event ...
+    
+    $ rst cal --delete-event e5e14e59
+
 
 Save defaults
 =============

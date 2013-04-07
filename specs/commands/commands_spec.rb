@@ -4,7 +4,7 @@ include RST
 
 describe 'Command-line arguments' do
 
-  it "should list interpreted options and files with --verbose" do
+  it "--verbose - should list interpreted options and files with --verbose" do
     got = run_shell("bin/rst ls --verbose Gemfile Rakefile README.*")
     got.should == <<-EOT
     Binary : bin/rst
@@ -16,53 +16,53 @@ describe 'Command-line arguments' do
     .gsub(/^\s*/,'').strip
   end
 
-  it "should list files with 'ls'" do
+  it "ls - should list files with 'ls'" do
     run_shell("bin/rst ls").should =~ /Gemfile/
     run_shell("bin/rst ls Gemfile Rakefile").should == "Gemfile\tRakefile"
   end
 
-  it "should print help with --help" do
+  it "--help - should print help" do
     run_shell("bin/rst --help").should =~ /Usage/
   end
 
-  it "should print out examples with --examples" do
+  it "--examples - should print out examples from doc/examples.md" do
     got = run_shell("bin/rst --examples")
     got.should == File.read(File.join(DOCS,'examples.md')).strip
   end
 
-  it 'should print a little calendar' do
+  it 'cal[endar] - should print a little calendar' do
     got = run_shell('bin/rst calendar --empty --from=1964-08-31 --to=1964-09-02')
     got.should =~ /Mon, Aug 31 1964/
     got.should =~ /Tue, Sep 01 1964/
     got.should =~ /Wed, Sep 02 1964/
   end
 
-  it 'should not list today if --to is given (bugfix)' do
+  it '(bugfix) should not list today if --to is given' do
     got = run_shell('bin/rst cal -e 1.1.1990,Test')
     got+= run_shell('bin/rst cal -f 1.1.1970 -t 1.1.1991')
     got.should_not match Date.today().strftime('%a, %b %d %Y')
     got.should_not match 'RST'
   end
 
-  it 'should store a calendar with a name' do
+  it '--name=CALENDARNAME - should store a calendar with a name' do
     run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
     got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
-  it 'should assume today if no date is given' do
+  it '--new-event should default to \'today\' if no date is given' do
     today = Time.now
     run_shell('bin/rst --new-event=Hello').strip.should == "Added: #{today.strftime(DEFAULT_DATE_FORMAT)}: Hello"
   end
 
-  it 'should interpret 1w as today+1.week' do
+  it '-e 1w - should interpret 1w as today+1.week' do
     today = Time.now
     due   = today+1.week
     got = run_shell('bin/rst -e 1w,Hello').strip
     got.should == "Added: #{due.strftime(DEFAULT_DATE_FORMAT)}: Hello"
   end
 
-  it 'should delete a calendar' do
+  it '--delete-calendar - should delete a calendar' do
     run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
     got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
     got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
@@ -71,7 +71,7 @@ describe 'Command-line arguments' do
     got.should_not =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
-  it 'should list calendars' do
+  it '--list-calendars - should list stored calendars' do
     clear_data_path
     run_shell('bin/rst cal --delete-calendar=unnamed')
     run_shell('bin/rst cal --delete-calendar=Birthdays --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
@@ -81,14 +81,14 @@ describe 'Command-line arguments' do
     got.should == "Birthdays           : 2 entries\nWeddings            : 1 entry"
   end
 
-  it 'should list events with ids' do
+  it '--with-ids - should list events with ids' do
     clear_data_path
     run_shell('bin/rst cal --new-event="today,Testentry"')
     got = run_shell('bin/rst cal --with-ids')
     got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]{8}) > Testentry/
   end
 
-  it '--delete-events should remove events from calendar' do
+  it '--delete-events ID[,ID,ID,...] - should remove events from calendar' do
     clear_data_path
     store = Persistent::DiskStore.new(CALENDAR_FILE)
     calendar = Calendar::Calendar.new('testcal')
@@ -104,7 +104,7 @@ describe 'Command-line arguments' do
   end
 
 
-  it 'should save defaults with --save-defaults' do
+  it '--save-defaults - should save current options as defaults' do
     got = run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
     got.should == 'Defaults saved'
     got = run_shell('bin/rst --list-defaults')
@@ -118,7 +118,7 @@ describe 'Command-line arguments' do
     .gsub(/^      /,'').strip
   end
 
-  it 'should overwrite default command if command is given' do
+  it 'COMMAND should overwrite default command if command is given' do
     run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
     run_shell("bin/rst ls").should =~ /Gemfile/
   end

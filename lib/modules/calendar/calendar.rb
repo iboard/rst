@@ -39,7 +39,7 @@ module RST
   #     # => Thu, May 22 1997: Tina's Birthday
   #
   module Calendar
-  
+
     # Some helper-methods useful when dealing with dates
     module CalendarHelper
 
@@ -92,7 +92,7 @@ module RST
       # @group public api
 
       attr_reader :name, :start_date, :end_date, :events
-   
+
       # @param [String] _name Name and persistent-id of this calendar.
       # @param [Date|Time|String] _start The date when the calendar starts
       # @param [Date|Time|String] _end   The date when the calendar ends
@@ -129,13 +129,13 @@ module RST
       def <<(add)
         events << add 
       end
-  
+
       # Calculate the span between start and end in seconds
       # @return [Float]
       def span
         ((end_date - start_date)*Numeric::DAYS).to_f
       end
-  
+
       # Array of strings for each day with events on it.
       #
       # @example
@@ -150,8 +150,8 @@ module RST
           format_events_for(_date,show_empty,show_ids)
         }.compact
       end
-      
-  
+
+
       # All events on the given date
       # @param [Date] date 
       # @return [Array] of [CalendarEvents]
@@ -162,9 +162,13 @@ module RST
 
       # Dump calendar events
       # @return [String]
-      def dump
+      def dump show_ids=false
         events.map { |event|
-          '"%s,%s"' % [ event.event_date.strftime('%Y-%m-%d'), event.event_headline ]
+          if show_ids
+            '%-8.8s %-15.15s "%s,%s"' % [ event.id, self.name, event.event_date.strftime('%Y-%m-%d'), event.event_headline ]
+          else
+            '"%s,%s"' % [ event.event_date.strftime('%Y-%m-%d'), event.event_headline ]
+          end
         }.join("\n")
       end
 
@@ -197,7 +201,7 @@ module RST
           }.join("\n  ").strip
         end
       end
-  
+
       # @endgroup 
 
       # Convert strings to a date

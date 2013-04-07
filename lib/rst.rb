@@ -295,7 +295,7 @@ module RST
     def dump_calendar
       store = Persistent::DiskStore.new(CALENDAR_FILE)
       store.all.map { |calendar|
-        calendar.dump if calendar.name == @options[:name] || @options[:name].blank?
+        calendar.dump(@options[:with_ids]) if calendar.name == @options[:name] || @options[:name].blank?
       }.compact.join("\n")
     end
 

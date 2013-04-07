@@ -4,49 +4,49 @@ describe 'Calendar module:' do
 
   describe 'Calendar Class' do
 
-    it 'should define a start and ending date' do
+    it '.new(name,from,to) should initialize with Date-objects' do
       calendar = Calendar::Calendar.new( 'noname', Date.today, Date.today-42.years )
       calendar.start_date.should == Date.today
       calendar.end_date.should == Date.today-42.years
     end
 
-    it 'should initialize with strings' do
+    it '.new(name,str_from,str_to) should initialize with strings' do
       calendar = Calendar::Calendar.new('dob', '31. Aug. 1964', '12. Mar. 2013' )
       calendar.start_date.year.should == 1964
       calendar.end_date.year.should == 2013
     end
 
-    it 'should return spanned days' do
+    it '.span should return number of days between start and end' do
       calendar = Calendar::Calendar.new('dob','31. 8. 1964', '2014-08-31')
       (calendar.span/1.year).round.should == 50
     end
 
-    it 'should list week days' do
+    it '.list_days(from,to,true) should list week days' do
       calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
       calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964/
       calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Tue, Sep 01 1964/
       calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Wed, Sep 02 1964/
     end
 
-    it 'should display lines with entries if empty==true (bugfix)' do
+    it '.list_days(from,to,true) should display lines with entries if empty==true (bugfix)' do
       calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
       calendar << Calendar::CalendarEvent.new('31.8.1964', 'Andi Altendorfer')
       calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964: Andi Altendorfer/
     end
 
-    it 'should interpret today as argument' do
+    it '.new(name,string,string) should interpret today as argument' do
       calendar = Calendar::Calendar.new('dob','1.1.1970', 'today')
       calendar.end_date.should == Date.today
     end
 
-    it 'should default to \'today\' if one date is missing' do
+    it '.new(name,nil,string) should default to \'today\' if an argument is missing' do
       cend  = Calendar::Calendar.new('dob','today')
       cfrom = Calendar::Calendar.new('dob',nil,'today')
       cend.end_date    == Date.today
       cfrom.start_date == Date.today
     end
 
-    it 'shoul interpret -e 1w as today+1week' do
+    it '.new(name, string) should interpret -e 1w as today+1week' do
       today = Date.today
       Calendar::Calendar.new(nil,'1d').start_date.to_s.should == (today+1).to_s
       Calendar::Calendar.new(nil,'1w').start_date.to_s.should == (today+7).to_s
@@ -54,7 +54,7 @@ describe 'Calendar module:' do
       expect { Calendar::CalendarEvent.new('1x','dummy') }.to raise_error RuntimeError
     end
 
-    it 'should have a setter method for :from, and :to' do
+    it '.form=, .to=, setter method for :from, and :to should be defined' do
       cal = Calendar::Calendar.new('dob','1.1.1970', '2.1.1970')
       cal.start_date.year.should == 1970
       cal.end_date.year.should == 1970
@@ -81,24 +81,24 @@ describe 'Calendar module:' do
       @obj = TestObject.new
     end
 
-    it 'should inject the event_date-method' do
+    it '.event_date - should be injected to the object' do
       @obj.event_date == nil
     end
 
-    it 'should know if it\'s scheduled' do
+    it '.scheduled? should return true if the object is scheduled' do
       @obj.should_not be_scheduled
     end
 
-    it 'should be schedule-able' do
+    it '.schedule!(date) should schedule the object' do
       @obj.schedule! Date.today
       @obj.should be_scheduled
     end
 
-    it 'should respond to event_headline' do
+    it '.event_headline() should respond with a simple string representation' do
       @obj.event_headline.should == @obj.inspect
     end
 
-    it 'should allow to overwrite event_headline' do
+    it '.event_headline() should be overwritten' do
       class MySpecialObject < Struct.new(:name)
         include Calendar::Eventable
         def event_headline
@@ -124,26 +124,33 @@ describe 'Calendar module:' do
     end
 
     describe 'Calendar' do
-      it 'should collect event-able objects' do
+
+      it '.list_days(start_on,end_on,show_empty,show_ids=false) shows entries between start_on and end_on' do
         @calendar << TestMeeting.new('Frank').schedule!('2.1.2013')
         @calendar << TestMeeting.new('Zappa').schedule!('5.1.2013')
         @calendar.list_days.join("\n").should =~ /Wed, Jan 02 2013\: MEETING with Frank/
         @calendar.list_days.join("\n").should =~ /Sat, Jan 05 2013\: MEETING with Zappa/
       end
 
-      it 'should list events with ids for Persistentable objects' do
+      it '.list_days(nil,nil,false,true) show entries with :id and :calendar-name' do
         TestMeeting.send(:include, RST::Persistent::Persistentable)
         meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
         @calendar << meeting
         @calendar.list_days(nil,nil,false,true).first.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]*) > MEETING with MyMeeting/
       end
 
-      it '.dump calendar-events' do
-        meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
-        @calendar << meeting
-        @calendar.dump.should =~ /#{Date.today.strftime('%Y-%m-%d')},MEETING with MyMeeting/
+      describe '.dump(show_ids=false) calendar-events' do
+        before do
+          meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
+          @calendar << meeting
+        end
+        it '(false) plain dump only' do
+          @calendar.dump.should =~ /#{Date.today.strftime('%Y-%m-%d')},MEETING with MyMeeting/
+        end
+        it '(true) dumps with id and calendar' do
+          @calendar.dump(true).should =~ /[0-9a-f]{8}\s+dob\s+ "#{Date.today.strftime('%Y-%m-%d')},MEETING with MyMeeting"/
+        end
       end
-
     end
   end
 
