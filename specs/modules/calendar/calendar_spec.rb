@@ -69,6 +69,24 @@ describe 'Calendar module:' do
       cal.id.should == 'Hurray'
     end
 
+    it '.to_text(name,from,to) should output a pretty formatted calendar' do
+      cal = Calendar::Calendar.new('Formatted','1.4.2013', '30.4.2013')
+      ev1 = Calendar::CalendarEvent.new('1.4.2013','Event 1')
+      ev2 = Calendar::CalendarEvent.new('20.4.2013','Event 2')
+      cal << ev1
+      cal << ev2
+      cal.to_text('1.4.2013','30.4.2013').strip.should == <<-EOT
+                April 2013        EVENTS:
+           Su Mo Tu We Th Fr Sa   Mon, Apr 01 2013: Event 1
+               1  2  3  4  5  6   Sat, Apr 20 2013: Event 2
+            7  8  9 10 11 12 13
+           14 15 16 17 18 19 20
+           21 22 23 24 25 26 27
+           28 29 30
+      EOT
+      .gsub(/^           /,'').strip
+    end
+
   end
 
   describe 'Eventable module' do

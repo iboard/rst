@@ -172,11 +172,37 @@ module RST
         }.join("\n")
       end
 
+      # Output a calendar for the given range.Including a small
+      # monthly calendar on the upper, left and a list of all
+      # events within given date-range
+      def to_text(from,to)
+        unless (_content=list_days(from,to)).empty?
+          _date = ensure_date(from)
+          left_column=build_cal(_date,ensure_date(to))
+          right_column=["EVENTS:"] + list_days(from,to)
+          rows = [] 
+          source = left_column.count > right_column.count ? left_column : right_column
+          source.each_with_index do |_r,idx|
+            rows << "%-22.22s %s " % [ left_column[idx].to_s+"     ", right_column[idx].to_s ]
+          end
+          rows.join("\n").gsub(/\s*$/,'')
+        end
+      end
       # @endgroup
 
       private
       # @group private api
 
+
+      # Uses OS'cal-command to format a small calendar for a given month
+      # @param [Date|String] from - start on date
+      # @param [Date|String] to - end on date
+      # @return [Arra] of text-lines
+      def build_cal from, to
+        (from..to).map{ |d| [d.month, d.year ] }.uniq.map { |m,y|
+          `cal #{m} #{y}`
+        }.join("\n\n").split(/\n/)
+      end
       # Output date and Events on this date in one line
       # @param [Date] _date
       # @param [Boolean] show_empty - do output lines with no events

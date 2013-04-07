@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'rubyshelltools'
-  s.version     = '0.0.6'
+  s.version     = '0.0.7'
   s.date        = '2013-04-05'
   s.summary     = "Ruby Shell Tools"
   s.description = "Tools for the unix shell"

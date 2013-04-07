@@ -140,6 +140,10 @@ module RST
           @options[:clear_defaults] = v
         end
 
+        opts.on('-p', '--print-calendar', 'Print calendar') do |p|
+          @options[:print_calendar] = p
+        end
+
         opts.separator ''
         opts.separator 'Commands:'
 
@@ -192,7 +196,12 @@ module RST
         @files << '*' if @files.empty?
         directory_listing( @files )
       when 'cal', 'calendar'
-        print_calendar
+        if @options[:print_calendar]
+          print_long_calendar
+        else
+          print_calendar
+        end
+
       else
         "unknown command '#{cmd.inspect}' - try --help"
       end
@@ -286,6 +295,14 @@ module RST
         cnt = calendar.events.count
         "%-20.20s: %d %s" % [calendar.id, cnt > 0 ? cnt : 'no', cnt > 1 ? 'entries' : 'entry']
       }
+    end
+
+    # Print a nice calendar with all events
+    def print_long_calendar
+      store = Persistent::DiskStore.new(CALENDAR_FILE)
+      store.all.map { |calendar|
+        calendar.to_text(@options[:from], @options[:to])
+      }.join("\n\n")
     end
 
     # Dump the calendar(s), thus the output can be used as input for -e again
