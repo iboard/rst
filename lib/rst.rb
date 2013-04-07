@@ -301,8 +301,11 @@ module RST
     def print_long_calendar
       store = Persistent::DiskStore.new(CALENDAR_FILE)
       store.all.map { |calendar|
-        calendar.to_text(@options[:from], @options[:to])
-      }.join("\n\n")
+        if @options[:name].blank? || @options[:name] == calendar.name
+          calendar.name + "\n" +
+          calendar.to_text(@options[:from], @options[:to], @options[:show_empty], @options[:with_ids]).to_s 
+        end
+      }.compact.join("\n\n")
     end
 
     # Dump the calendar(s), thus the output can be used as input for -e again

@@ -115,6 +115,29 @@ List entries with IDs and delete by ID
     
     $ rst cal --delete-event e5e14e59
 
+Print a pretty calendar
+-----------------------
+
+        $ rst cal -n work --print-calendar
+        
+             April 2013        EVENTS:
+        Su Mo Tu We Th Fr Sa   Wed, Apr 24 2013: RailsConf2013 7h Abflug München + TÜV-Audit
+            1  2  3  4  5  6   Mon, Apr 29 2013: RailsConf2013
+         7  8  9 10 11 12 13   Tue, Apr 30 2013: RailsConf2013
+        14 15 16 17 18 19 20   Wed, May 01 2013: RailsConf2013
+        21 22 23 24 25 26 27   Thu, May 02 2013: RailsConf2013
+        28 29 30               Fri, May 03 2013: RailsConf2013
+                               Sat, May 04 2013: RailsConf2013 Ankunft München
+                               Mon, May 06 2013: Prüfung Romy
+              May 2013
+        Su Mo Tu We Th Fr Sa
+                  1  2  3  4
+         5  6  7  8  9 10 11
+        12 13 14 15 16 17 18
+        19 20 21 22 23 24 25
+        26 27 28 29 30 31
+
+
 
 Save defaults
 =============

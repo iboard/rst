@@ -175,11 +175,13 @@ module RST
       # Output a calendar for the given range.Including a small
       # monthly calendar on the upper, left and a list of all
       # events within given date-range
-      def to_text(from,to)
+      # @param [String|Date] from - Start on date
+      # @param [String|Date] to - End on date
+      # @return [String]
+      def to_text(from,to,empty=false,ids=false)
         unless (_content=list_days(from,to)).empty?
-          _date = ensure_date(from)
-          left_column=build_cal(_date,ensure_date(to))
-          right_column=["EVENTS:"] + list_days(from,to)
+          left_column=build_cal(ensure_date(from),ensure_date(to))
+          right_column=("EVENTS:\n"+list_days(from,to,empty,ids).join("\n")).split(/\n/)
           rows = [] 
           source = left_column.count > right_column.count ? left_column : right_column
           source.each_with_index do |_r,idx|
@@ -201,7 +203,7 @@ module RST
       def build_cal from, to
         (from..to).map{ |d| [d.month, d.year ] }.uniq.map { |m,y|
           `cal #{m} #{y}`
-        }.join("\n\n").split(/\n/)
+        }.join("\n").split(/\n/)
       end
       # Output date and Events on this date in one line
       # @param [Date] _date
@@ -210,7 +212,7 @@ module RST
       # @param [Boolean] show_ids - output ids for events
       def format_events_for(_date,show_empty=false,show_ids=false)
         if  (_line=event_headlines_for(_date,show_ids)) != '' || show_empty
-          (show_ids ? "%s:\n  %s" : "%s: %s") % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
+          (show_ids ? "%s:\n%s" : "%s: %s") % [_date.strftime(DEFAULT_DATE_FORMAT), _line]
         end
       end
 
@@ -223,8 +225,8 @@ module RST
           events_on(_date).map(&:event_headline).join(' + ').strip
         else
           events_on(_date).map{|e|
-            "%s > %s" % [e.respond_to?(:id) ? e.id : 'n/a' ,e.event_headline]
-          }.join("\n  ").strip
+            "%16.16s: %s" % [e.respond_to?(:id) ? e.id : 'n/a' ,e.event_headline]
+          }.join("\n").gsub(/\s*$/,'')
         end
       end
 

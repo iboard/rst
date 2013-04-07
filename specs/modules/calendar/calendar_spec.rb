@@ -154,7 +154,7 @@ describe 'Calendar module:' do
         TestMeeting.send(:include, RST::Persistent::Persistentable)
         meeting = TestMeeting.new('MyMeeting').schedule!(Date.today)
         @calendar << meeting
-        @calendar.list_days(nil,nil,false,true).first.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]*) > MEETING with MyMeeting/
+        @calendar.list_days(nil,nil,false,true).first.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n\s*([a-f0-9]*): MEETING with MyMeeting/
       end
 
       describe '.dump(show_ids=false) calendar-events' do

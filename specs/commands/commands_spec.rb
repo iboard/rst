@@ -85,7 +85,7 @@ describe 'Command-line arguments' do
     clear_data_path
     run_shell('bin/rst cal --new-event="today,Testentry"')
     got = run_shell('bin/rst cal --with-ids')
-    got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n  ([a-f0-9]{8}) > Testentry/
+    got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n        ([a-f0-9]{8}): Testentry/
   end
 
   it '--delete-events ID[,ID,ID,...] - should remove events from calendar' do
