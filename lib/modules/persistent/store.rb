@@ -43,11 +43,18 @@ module RST
       end
 
       # @param [Array|String] ids or id to search
+      # @yield [Object] for each object found
       # @return [nil]    if nothing found
       # @return [Object] if exactly one object found
       # @return [Array]  of objects with matching ids if more than one matched
       def find(*ids)
-        flatten all.select { |obj| ids.include?(obj.id) }
+        if block_given?
+          all.select { |obj| ids.include?(obj.id) }.each do |obj|
+            yield(obj)
+          end
+        else
+          flatten all.select { |obj| ids.include?(obj.id) }
+        end
       end
 
 

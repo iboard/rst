@@ -31,7 +31,7 @@ describe Persistent do
         expect { dummy.send(:sync_store) }.to raise_error( AbstractMethodCallError )
       end
 
-      it 'should delete the store' do 
+      it '.delete! should delete the store' do 
         dummy = Dummy.new
         expect { dummy.delete! }.to raise_error
       end
@@ -50,12 +50,12 @@ describe Persistent do
       @store.all.should be_empty
     end
 
-    it 'should be able to add and retrieve from store' do
+    it '.<< adds objects to the store' do
       @store << OpenStruct.new(name:'Frank')
       @store.first.name.should == 'Frank'
     end
 
-    it 'should remove objects from store' do
+    it '.-= should remove objects from store' do
       jimi  = Something.new('Jimi Hendrix')
       frank = Something.new('Frank Zappa')
       hansi = Something.new('Hansi Hinterseer')
@@ -79,7 +79,7 @@ describe Persistent do
       @store.all.first.name.should == 'different'
     end
 
-    it 'should find an object by id' do
+    it '.find(id) should find an object by id' do
       dummy = Something.new 'Completely'
       @store << dummy
       id = dummy.id
@@ -88,7 +88,7 @@ describe Persistent do
       reloaded.name.should == 'Completely'
     end
 
-    it 'should find more than one object with find' do
+    it '.find(id,id,...) should find more than one object' do
       o1 = Something.new 'Object One'
       o2 = Something.new 'Object Two'
       @store << o1
@@ -96,7 +96,19 @@ describe Persistent do
       @store.find(o1.id,o2.id).should == [o1,o2]
     end
 
-    it 'should return nil if nothing is found' do
+    it '.find(...) { |found| ... } yields for each object found' do
+      obj1= Something.new 'Find me with a block'
+      obj2= Something.new 'Find me too'
+      @store << obj1
+      @store << obj2
+      found = []
+      @store.find obj1.id,obj2.id do |_obj|
+        found << _obj
+      end
+      found.should == [obj1,obj2]
+    end
+
+    it '.find(...) should return nil if nothing is found' do
       @store.find("Nothing").should be_nil
     end
 

@@ -89,7 +89,7 @@ module RST
       include Persistent::Persistentable
       include CalendarHelper
 
-      # @group public api
+      # @group public API
 
       attr_reader :name, :start_date, :end_date, :events
 
@@ -190,7 +190,7 @@ module RST
       # @endgroup
 
       private
-      # @group private api
+      # @group private API
 
       # Format a 2 column text-output
       # @example
@@ -205,7 +205,7 @@ module RST
       #       21 22 23 24 25 26 27   Thu, May 02 2013: RailsConf2013
       #       28 29 30               Fri, May 03 2013: RailsConf2013
       #                              Sat, May 04 2013: RailsConf2013 Ankunft München
-      #                              Mon, May 06 2013: Prüfung Romy
+      #                              Mon, May 06 2013: Exam Romy
       #            May 2013
       #       Su Mo Tu We Th Fr Sa
       #       1  2  3  4
@@ -226,10 +226,10 @@ module RST
         rows.join("\n").gsub(/\s*$/,'')
       end
 
-      # Uses OS'cal-command to format a small calendar for a given month
+      # Uses OS' cal-command to format a small calendar for a given month
       # @param [Date|String] from - start on date
       # @param [Date|String] to - end on date
-      # @return [Arra] of text-lines
+      # @return [Array] of text-lines
       def build_cal from, to
         (from..to).map{ |d| [d.month, d.year ] }.uniq.map { |m,y|
           `cal #{m} #{y}`

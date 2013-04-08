@@ -60,11 +60,10 @@ module RST
       def move_store store
         if @store && @store != store
           raise NotImplementedError.new('An object can\'t be moved to another store')
-        elsif @store == store
-          self
-        else
+        elsif @store != store
           @store = store
         end
+        self.store
       end
     end
 

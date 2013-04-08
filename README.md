@@ -71,106 +71,17 @@ Browsing the code
 
   **To get a glue what's goin on**
 
-  do a `rspec --format d spec/` in the project's root
+  do a `rspec --format d specs/` in the project's root
 
         Command-line arguments
           --verbose - should list interpreted options and files with --verbose
           ls - should list files with 'ls'
           --help - should print help
           --examples - should print out examples from doc/examples.md
-          cal[endar] - should print a little calendar
-          (bugfix) should not list today if --to is given
-          --name=CALENDARNAME - should store a calendar with a name
-          --new-event should default to 'today' if no date is given
-          -e 1w - should interpret 1w as today+1.week
-          --delete-calendar - should delete a calendar
-          --list-calendars - should list stored calendars
-          --with-ids - should list events with ids
-          --delete-events ID[,ID,ID,...] - should remove events from calendar
-          --save-defaults - should save current options as defaults
-          COMMAND should overwrite default command if command is given
+        
+        ..... cut out a lot of lines .....
 
-        Ruby core-extensions
-          Numeric
-            should support calendar-functions
-          String
-            should respond to blank?
-
-        Exceptions
-          RST::AbstractMethodCallError
-            .message should include backtrace-information
-
-        Initialize logger
-          should log to stderr
-
-        RST::Calendar::CalendarEvent
-          should initialize with a date and a label
-          should output the label as event's headline
-          should generate an id if no id-method defined yet
-
-        Calendar module:
-          Calendar Class
-            .new(name,from,to) should initialize with Date-objects
-            .new(name,str_from,str_to) should initialize with strings
-            .span should return number of days between start and end
-            .list_days(from,to,true) should list week days
-            .list_days(from,to,true) should display lines with entries if empty==true (bugfix)
-            .new(name,string,string) should interpret today as argument
-            .new(name,nil,string) should default to 'today' if an argument is missing
-            .new(name, string) should interpret -e 1w as today+1week
-            .form=, .to=, setter method for :from, and :to should be defined
-            .id should be the name of the calendar
-            .to_text(name,from,to) should output a pretty formatted calendar
-          Eventable module
-            .event_date - should be injected to the object
-            .scheduled? should return true if the object is scheduled
-            .schedule!(date) should schedule the object
-            .event_headline() should respond with a simple string representation
-            .event_headline() should be overwritten
-          A calendar with event-able objects
-            Calendar
-              .list_days(start_on,end_on,show_empty,show_ids=false) shows entries between start_on and end_on
-              .list_days(nil,nil,false,true) show entries with :id and :calendar-name
-              .dump(show_ids=false) calendar-events
-                (false) plain dump only
-                (true) dumps with id and calendar
-
-        RST::Persistent
-          Abstract Store
-            should raise an exception if setup_store is not overwritten
-            if setup_store is overwritten but no other abstract method
-              should raise an exceptions if abstract methods not overwritten
-              should delete the store
-          MemoryStore
-            should initialize an in-memory store
-            should be able to add and retrieve from store
-            should remove objects from store
-            should have persistence functions
-            should persist an object
-            should find an object by id
-            should find more than one object with find
-            should return nil if nothing is found
-            .create should act as a factory for objects
-            .delete should delete the store
-            should not allow to move the store once it's set
-          DiskStore
-            .delete! should remove the file
-            .<< should add an object and store it to disk
-            should remove objects from store
-            .<< should update existing objects rather than add new objects
-          Persistentable
-            in a MemoryStore
-              .id should be a random hex if object doesn't provide an id
-              .save updates the object in the store
-              .delete removes the object from it's store
-            in a DiskStore
-              .save updates the object in the store
-              .delete removes the object from it's store
-
-        Finished in 6.82 seconds
-        65 examples, 0 failures
-        Coverage report generated for RSpec to /Users/aa/Development/ruby2/rst/coverage. 596 / 596 LOC (100.0%) covered.
-
+  
   **modules**
   
  Modules are the core of this project. Within the directory

@@ -3,7 +3,7 @@ module RST
   module Calendar
 
     # A CalendarEvent happens on a given date and has a label. 
-    # It's can be used in a Calendar
+    # It can be used in a Calendar
     # @see Calendar::Calendar
     # @see Calendar::Eventable
     # @example

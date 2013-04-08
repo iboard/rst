@@ -375,8 +375,7 @@ module RST
     def save_defaults
       store = Persistent::DiskStore.new('defaults')
       options.delete(:save_defaults)
-      defaults = Defaults.new( command, options )
-      store << defaults
+      store << Defaults.new( command, options )
       "Defaults saved"
     end
 
