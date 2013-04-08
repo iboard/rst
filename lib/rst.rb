@@ -76,13 +76,16 @@ module RST
           @options[:verbose] = v
         end
 
-        opts.on('--examples', 'Show some usage examples') do |x|
+        opts.on('--examples', 'Show usage examples') do |x|
           @options[:examples] = x
         end
 
-        opts.on('-h', '--help', 'Print help') do |h|
+        opts.on('-h', '--help', 'Print (this) help') do |h|
           puts opts
         end
+
+        opts.separator ''
+        opts.separator 'Calendar-options:'
 
         opts.on('-f', '--from DATE', String, 'Set from-date') do |from|
           @options[:from] = from
@@ -92,11 +95,11 @@ module RST
           @options[:to] = to
         end
 
-        opts.on('-n', '--name NAME', String, 'Use this name for the command') do |name|
+        opts.on('-n', '--name NAME', String, 'Use this name for eg. calendar') do |name|
           @options[:name] = name
         end
 
-        opts.on('-e', '--new-event [DATE,]STRING', Array, 'Add an event') do |date,name|
+        opts.on('-e', '--new-event [DATE,]STRING', Array, 'Add an event to NAME') do |date,name|
           if name.nil?
             name = date
             date = Date.today
@@ -104,15 +107,23 @@ module RST
           @options[:new_event] = {date: date, label: name}
         end
 
+        opts.on('-p', '--print-calendar', 'Print calendar') do |p|
+          @options[:print_calendar] = p
+        end
+
+        opts.on('-d', '--dump', 'Dump calendar-events' ) do |d|
+          @options[:dump] = d
+        end
+
         opts.on('--list-calendars', 'List available calendars') do
           @options[:list_calendars] = true
         end
 
-        opts.on('--delete-calendar CALENDARNAME', String, 'Delete an calendar and all it\'s entries!') do |name|
+        opts.on('--delete-calendar CALNAME', String, 'Delete an calendar and all it\'s entries!') do |name|
           @options[:delete_calendar] = name
         end
 
-        opts.on('--delete-events ID[,ID,...]',Array, 'delete entries from calendar') do |ids|
+        opts.on('--delete-events ID[,ID,...]',Array, 'delete entries from calendar NAME') do |ids|
           @options[:delete_events] = ids
         end
 
@@ -124,10 +135,8 @@ module RST
           @options[:with_ids] = ids
         end
 
-        opts.on('-d', '--dump', 'Dump calendar-events' ) do |d|
-          @options[:dump] = d
-        end
-
+        opts.separator ''
+        opts.separator 'Other options:'
         opts.on('--save-defaults', 'Save given params as defaults') do |v|
           @options[:save_defaults] = v
         end
@@ -138,10 +147,6 @@ module RST
 
         opts.on('--clear-defaults', 'delete previously saved defaults') do |v|
           @options[:clear_defaults] = v
-        end
-
-        opts.on('-p', '--print-calendar', 'Print calendar') do |p|
-          @options[:print_calendar] = p
         end
 
         opts.separator ''
