@@ -41,6 +41,9 @@ module RST
     attr_reader :command
 
     # Initialize the Command-runner with arguments and parse them.
+    # @example
+    #   app = RstCommand.new(ARGV)
+    #   app.run()
     def initialize(args)
       load_defaults
       parse_options(args)
@@ -70,6 +73,14 @@ module RST
       OptionParser.new do |opts|
         opts.banner = 'Usage: rst [COMMAND] [options] [FILES..]'
 
+        opts.separator "\nCommands:"
+        opts.separator <<-EOT
+          nil .......... no command. Interpret options only (useful in combination with -v)
+          ls ........... list directory and files
+          cal[endar] ... print a calendar. See Calendar-options.
+        EOT
+        .gsub(/^\s+/,'    ')
+
         opts.separator "\nOptions:"
 
         opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
@@ -87,6 +98,7 @@ module RST
         opts.separator ''
         opts.separator 'Calendar-options:'
 
+        opts.separator '  Calendar-metadata'
         opts.on('-f', '--from DATE', String, 'Set from-date') do |from|
           @options[:from] = from
         end
@@ -99,6 +111,7 @@ module RST
           @options[:name] = name
         end
 
+        opts.separator '  Events'
         opts.on('-e', '--new-event [DATE,]STRING', Array, 'Add an event to NAME') do |date,name|
           if name.nil?
             name = date
@@ -106,6 +119,12 @@ module RST
           end
           @options[:new_event] = {date: date, label: name}
         end
+
+        opts.on('--delete-events ID[,ID,...]',Array, 'delete entries from calendar NAME') do |ids|
+          @options[:delete_events] = ids
+        end
+
+        opts.separator '  Calendar-actions'
 
         opts.on('-p', '--print-calendar', 'Print calendar') do |p|
           @options[:print_calendar] = p
@@ -123,10 +142,8 @@ module RST
           @options[:delete_calendar] = name
         end
 
-        opts.on('--delete-events ID[,ID,...]',Array, 'delete entries from calendar NAME') do |ids|
-          @options[:delete_events] = ids
-        end
 
+        opts.separator '  Output-options'
         opts.on('--[no-]empty', 'Show empty entries') do |show|
           @options[:show_empty] = show
         end
@@ -150,17 +167,7 @@ module RST
         end
 
         opts.separator ''
-        opts.separator 'Commands:'
-
-        opts.separator <<-EOT
-          nil .......... no command. Interpret options only (useful in combination with -v)
-          ls ........... list directory and files
-          cal[endar] ... print a calendar --from --to
-        EOT
-        .gsub(/^\s+/,'    ')
-
-        opts.separator ''
-        opts.separator 'DATE-FORMATS FOR --new-event:'
+        opts.separator 'DATE-formats used in --to, --form, and  --new-event:'
         opts.separator <<-EOT
           omitted....... today
           today ........ today
