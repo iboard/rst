@@ -31,19 +31,19 @@ Print out available options and commands
             -p, --print-calendar             Print calendar
 
         Commands:
-            nil .......... no command. Interpret options only (useful in combination with -v)
-            ls ........... list directory and files
-            cal[endar] ... print a calendar --from --to
+            nil .......... No command. Interpret options only (useful in combination with -v)
+            ls ........... List directory and files
+            cal[endar] ... Print a calendar --from --to
 
         DATE-FORMATS FOR --new-event:
-            omitted....... today
-            today ........ today
-            nDWM ......... today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
+            omitted....... Today
+            today ........ Today
+            nDWM ......... Today + n days, weeks, months eg 1w, 2d[ays], 1M[ONTH]
             yyyy-mm-dd
             dd.mm.yyyy
             mm/dd/yyyy
 
-            use --example for a more detailed list of commands.
+            Use --example for a more detailed list of commands.
 rst ls *
 --------
 
@@ -125,14 +125,14 @@ Print a pretty calendar
         $ rst cal -n work --print-calendar
         
              April 2013        EVENTS:
-        Su Mo Tu We Th Fr Sa   Wed, Apr 24 2013: RailsConf2013 7h Abflug München + TÜV-Audit
+        Su Mo Tu We Th Fr Sa   Wed, Apr 24 2013: RailsConf2013 7h Departure Munich + TUV Audit
             1  2  3  4  5  6   Mon, Apr 29 2013: RailsConf2013
          7  8  9 10 11 12 13   Tue, Apr 30 2013: RailsConf2013
         14 15 16 17 18 19 20   Wed, May 01 2013: RailsConf2013
         21 22 23 24 25 26 27   Thu, May 02 2013: RailsConf2013
         28 29 30               Fri, May 03 2013: RailsConf2013
-                               Sat, May 04 2013: RailsConf2013 Ankunft München
-                               Mon, May 06 2013: Prüfung Romy
+                               Sat, May 04 2013: RailsConf2013 Arrival Munich
+                               Mon, May 06 2013: Exam Romy
               May 2013
         Su Mo Tu We Th Fr Sa
                   1  2  3  4
