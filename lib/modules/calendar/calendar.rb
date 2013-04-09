@@ -96,6 +96,7 @@ module RST
       # @param [String] _name Name and persistent-id of this calendar.
       # @param [Date|Time|String] _start The date when the calendar starts
       # @param [Date|Time|String] _end   The date when the calendar ends
+      # @param [Array] _events initial events
       # @see DEFAULT_CALENDAR_NAME
       def initialize(_name=DEFAULT_CALENDAR_NAME, _start=nil, _end=nil, _events=[])
         @name       = _name
