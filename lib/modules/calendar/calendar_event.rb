@@ -30,7 +30,7 @@ module RST
       def initialize(_date,_label)
         @label = _label
         @id ||= SecureRandom::hex(4)
-        schedule! ensure_date(_date)
+        schedule! parse_date_param(_date)
       end
 
       # override abstract method for an Eventable

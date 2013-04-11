@@ -16,24 +16,6 @@ describe 'Calendar module:' do
       calendar.end_date.year.should == 2013
     end
 
-    it '.span should return number of days between start and end' do
-      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '2014-08-31')
-      (calendar.span/1.year).round.should == 50
-    end
-
-    it '.list_days(from,to,true) should list week days' do
-      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
-      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964/
-      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Tue, Sep 01 1964/
-      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Wed, Sep 02 1964/
-    end
-
-    it '.list_days(from,to,true) should display lines with entries if empty==true (bugfix)' do
-      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
-      calendar << Calendar::CalendarEvent.new('31.8.1964', 'Andi Altendorfer')
-      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964: Andi Altendorfer/
-    end
-
     it '.new(name,string,string) should interpret today as argument' do
       calendar = Calendar::Calendar.new('dob','1.1.1970', 'today')
       calendar.end_date.should == Date.today
@@ -52,6 +34,24 @@ describe 'Calendar module:' do
       Calendar::Calendar.new(nil,'1w').start_date.to_s.should == (today+7).to_s
       Calendar::Calendar.new(nil,'1m').start_date.month.should == (today+31).month
       expect { Calendar::CalendarEvent.new('1x','dummy') }.to raise_error RuntimeError
+    end
+
+    it '.span should return number of days between start and end' do
+      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '2014-08-31')
+      (calendar.span/1.year).round.should == 50
+    end
+
+    it '.list_days(from,to,true) should list week days' do
+      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964/
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Tue, Sep 01 1964/
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Wed, Sep 02 1964/
+    end
+
+    it '.list_days(from,to,true) should display lines with entries if empty==true (bugfix)' do
+      calendar = Calendar::Calendar.new('dob','31. 8. 1964', '1964-09-02')
+      calendar << Calendar::CalendarEvent.new('31.8.1964', 'Andi Altendorfer')
+      calendar.list_days('31.8.1964','1964-09-02',true).join("\n").should =~ /Mon, Aug 31 1964: Andi Altendorfer/
     end
 
     it '.form=, .to=, setter method for :from, and :to should be defined' do

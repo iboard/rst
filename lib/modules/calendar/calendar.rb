@@ -1,6 +1,6 @@
 require 'date'
 require 'modules/persistent/persistent'
-
+require 'modules/calendar/calendar_helper'
 module RST
 
   # Calendar-module provides the Calendar-class which is supposed to hold
@@ -40,43 +40,7 @@ module RST
   #
   module Calendar
 
-    # Some helper-methods useful when dealing with dates
-    module CalendarHelper
-
-      # You can use 'today' or any format which Date.parse can handle.
-      # @param [nil|String|Time|Date] param
-      # @return [Date] always returns a Date regardless of the type of input
-      def ensure_date(param)
-        if param.is_a?(Date) || param.is_a?(::Time)
-          param
-        elsif param =~ /today/i || param.nil?
-          Date.today 
-        elsif param =~ /\d+[a-zA-Z]/i
-          get_today_plus(param)
-        else 
-          Date.parse(param)
-        end
-      end
-
-      # Get Today + param
-      # @param [String] param nDWM n=Number Day Weeks Months
-      def get_today_plus(param)
-        offset = 0
-        param.scan(/(\d+)([a-z])/i) do |count,unit|
-          offset = case unit[0].downcase
-          when 'd'
-            count.to_i.days
-          when 'w'
-            count.to_i.weeks
-          when 'm'
-            count.to_i.months
-          else
-            raise "Unknown unit #{unit}. Valid units are d,w,m or days,weeks,months"
-          end
-        end
-        Date.parse( (Time.now + offset).to_s )
-      end
-    end
+    include CalendarHelper
 
     # Calendar has a name and will be stored in Persistent::DiskStore(CALENDAR_FILE)
     # with it's name as the id. Thus you can save different calendars in
@@ -183,7 +147,7 @@ module RST
       # @return [String]|nil
       def to_text(from,to,empty=false,ids=false)
         unless (_content=list_days(from,to)).empty?
-          left_column=build_cal(ensure_date(from),ensure_date(to))
+          left_column=build_cal(parse_date_param(from),parse_date_param(to))
           right_column=("EVENTS:\n"+list_days(from,to,empty,ids).join("\n")).split(/\n/)
           render_2col_lines(left_column, right_column)
         end
@@ -263,13 +227,6 @@ module RST
       end
 
       # @endgroup 
-
-      # Convert strings to a date
-      # @param [Date|Time|String] param - default is 'today'
-      # @return [Date|Time]
-      def parse_date_param(param=Date.today)
-        ensure_date(param)
-      end
 
     end
 
