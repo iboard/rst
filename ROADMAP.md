@@ -13,6 +13,8 @@ Review args for calendar
                         ............ should -e be a default? (may be
                                      tricky to parse
         rst cal -w [n]  ............ should list the current +n week(s)
+        ✔ rst --dump ................. should dump in a format which can be re-imported
+        ✔ rst --print ................ should output a pretty printable calendar
         
 **Ideas for new feature 'Notes'**
 

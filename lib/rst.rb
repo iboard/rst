@@ -126,7 +126,7 @@ module RST
 
         opts.separator '  Calendar-actions'
 
-        opts.on('-p', '--print-calendar', 'Print calendar') do |p|
+        opts.on('-p', '--[no-]print-calendar', 'Print calendar') do |p|
           @options[:print_calendar] = p
         end
 
