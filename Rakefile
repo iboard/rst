@@ -3,7 +3,6 @@ require_relative 'lib/load'
 
 options = ENV['TERM'] == 'dumb' ? '--no-color' : '--color'
 
-
 def ask prompt, allow
   loop do
     printf( "%s (%s):" % [prompt, "[#{allow.first}]#{allow[1..-1].join('/')}"])
@@ -18,14 +17,14 @@ end
 # Application Tasks
 task :default => 'test'
 
-desc 'Run Module-specs w/o command-line calls'
+desc 'Run all tests with mocked system-calls'
 task :test do
-  system "rspec -f p #{options} specs/core_extensions specs/modules"
+  system "rspec -f p #{options} specs/"
 end
 
-desc 'Run all tests including specs/commands'
-task :all do
-  system "rspec -f p #{options} specs"
+desc 'Run all tests with true system-calls (slower)'
+task :with_syscalls do
+  system "RUN_SHELL=TRUE rspec -f p #{options} specs"
 end
 
 desc 'Run module-specs only'

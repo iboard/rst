@@ -1,6 +1,15 @@
 Ruby Shell Tools - Road-map
 ===========================
 
+Environment
+-----------
+
+  ✔ Mock/Stub system-requests
+    - rake [:test] - mocks system-calls (fast)
+    - rake with_syscalls - does real system-calls (slower)
+ 
+
+
 Review args for calendar
 ------------------------
 

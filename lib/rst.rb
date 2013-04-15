@@ -45,6 +45,7 @@ module RST
     #   app = RstCommand.new(ARGV)
     #   app.run()
     def initialize(args)
+      @options = {}
       load_defaults
       parse_options(args)
       _command = args.shift
@@ -158,7 +159,7 @@ module RST
           @options[:save_defaults] = v
         end
 
-        opts.on('--list-defaults', 'list saved defaults') do |v|
+        opts.on('--[no-]list-defaults', 'list saved defaults') do |v|
           @options[:list_defaults] = v
         end
 
@@ -253,9 +254,9 @@ module RST
     def run_option(option)
       case option.to_s
       when 'examples'
-        File.read(File.join(DOCS,'examples.md')).strip
+        File.read(File.join(DOCS,'examples.md')).strip if options[:examples]
       when 'verbose'
-        print_arguments
+        print_arguments if options[:verbose]
       when 'new_event'
         new_event = add_event
         "Added: %s: %s" % [new_event.event_date.strftime(DEFAULT_DATE_FORMAT), new_event.event_headline.strip]
@@ -270,7 +271,7 @@ module RST
       when 'save_defaults'
         save_defaults
       when 'list_defaults'
-        list_defaults
+        list_defaults if options[:list_defaults]
       when 'clear_defaults'
         clear_defaults
       else

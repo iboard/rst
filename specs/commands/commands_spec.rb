@@ -4,21 +4,20 @@ include RST
 
 describe 'Command-line arguments' do
 
-  it "--verbose - should list interpreted options and files with --verbose" do
+  it "--verbose - should list interpreted options and files with --verbose", focus: true do
     got = run_shell("bin/rst ls --verbose Gemfile Rakefile README.*")
-    got.should == <<-EOT
-    Binary : bin/rst
+    got.split(/\n/)[1..-1].join("\n").should == <<-EOT
     Command: ls
-    Options: [:name, "unnamed"], [:from, "today"], [:to, "today"], [:show_empty, false], [:verbose, true]
-    Files  : Gemfile, Rakefile, README.md
+    Options: [:verbose, true]
+    Files  : Gemfile, Rakefile, README.#{ENV['RUN_SHELL'] == 'TRUE' ? 'md' : '*'}
     Gemfile	Rakefile	README.md
     EOT
     .gsub(/^\s*/,'').strip
   end
 
   it "ls - should list files with 'ls'" do
-    run_shell("bin/rst ls").should =~ /Gemfile/
-    run_shell("bin/rst ls Gemfile Rakefile").should == "Gemfile\tRakefile"
+    run_shell("bin/rst ls -v").should =~ /Gemfile/
+    run_shell("bin/rst ls --no-verbose Gemfile Rakefile").should == "Gemfile\tRakefile"
   end
 
   it "--help - should print help" do
@@ -38,16 +37,17 @@ describe 'Command-line arguments' do
   end
 
   it '(bugfix) should not list today if --to is given' do
-    got = run_shell('bin/rst cal -e 1.1.1990,Test')
-    got+= run_shell('bin/rst cal -f 1.1.1970 -t 1.1.1991')
+    clear_data_path
+    got = run_shell('bin/rst cal -e \'1.1.1990,Test\'')
+    got+= run_shell('bin/rst cal -f \'1.1.1970\' -t \'1.1.1991\'')
     got.should_not match Date.today().strftime('%a, %b %d %Y')
     got.should_not match 'RST'
   end
 
   it '--name=CALENDARNAME - should store a calendar with a name' do
-    run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
-    got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
-    got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
+    run_shell('bin/rst cal --name=Birthdays --new-event \'1964-08-31,Andis Birthday\'')
+    got = run_shell('bin/rst cal --name=Birthdays --from 1964-08-31 --to 1964-08-31')
+    got.split(/\n/).last.should =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
   it '--new-event should default to \'today\' if no date is given' do
@@ -63,11 +63,12 @@ describe 'Command-line arguments' do
   end
 
   it '--delete-calendar - should delete a calendar' do
-    run_shell('bin/rst cal --name=Birthdays --new-event="1964-08-31,Andis Birthday"')
-    got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
+    clear_data_path
+    run_shell('bin/rst cal --name=Birthdays --new-event \'1964-08-31,Andis Birthday\'')
+    got = run_shell('bin/rst cal --name Birthdays --from 1964-08-31 --to 1964-08-31')
     got.should =~ /Mon, Aug 31 1964\: Andis Birthday/
     run_shell('bin/rst --delete-calendar Birthdays')
-    got = run_shell('bin/rst cal --name=Birthdays --from=1964-08-31 --to=1964-08-31')
+    got = run_shell('bin/rst cal --name Birthdays --from 1964-08-31 --to 1964-08-31')
     got.should_not =~ /Mon, Aug 31 1964\: Andis Birthday/
   end
 
@@ -83,8 +84,8 @@ describe 'Command-line arguments' do
 
   it '--with-ids - should list events with ids' do
     clear_data_path
-    run_shell('bin/rst cal --new-event="today,Testentry"')
-    got = run_shell('bin/rst cal --with-ids')
+    run_shell('bin/rst cal -n default -e today,Testentry')
+    got = run_shell('bin/rst cal --name default -f today -t today --with-ids')
     got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n        ([a-f0-9]{8}): Testentry/
   end
 
@@ -105,14 +106,14 @@ describe 'Command-line arguments' do
 
 
   it '--save-defaults - should save current options as defaults' do
-    got = run_shell('bin/rst cal --from 1.1.2013 --to 31.1.2013 --save-defaults')
-    got.should == 'Defaults saved'
+    got = run_shell('bin/rst cal --no-empty -n unnamed --from 1.1.2013 --to 31.1.2013 --save-defaults')
+    got.should =~ /Defaults saved/
     got = run_shell('bin/rst --list-defaults')
-    got.should == "Command: cal\nOptions:\n--name unnamed\n--from 1.1.2013\n--to 31.1.2013\n--show_empty false"
-    got = run_shell('bin/rst --verbose').should == <<-EOT
-      Binary : bin/rst
+    got.should == "Command: cal\nOptions:\n--show_empty false\n--name unnamed\n--from 1.1.2013\n--to 31.1.2013"
+    got = run_shell('bin/rst --verbose --no-list-defaults').should == <<-EOT
+      Binary : #{ENV['RUN_SHELL'] == 'TRUE' ? 'bin/rst' : $0}
       Command: cal
-      Options: [:name, \"unnamed\"], [:from, \"1.1.2013\"], [:to, \"31.1.2013\"], [:show_empty, false], [:verbose, true]
+      Options: [:show_empty, false], [:name, \"unnamed\"], [:from, \"1.1.2013\"], [:to, \"31.1.2013\"], [:verbose, true], [:list_defaults, false]
       Files  :
     EOT
     .gsub(/^      /,'').strip
