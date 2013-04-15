@@ -13,10 +13,6 @@ require File.expand_path('../../lib/load',__FILE__)
 
 def clear_data_path
   system 'rm', '-rf', File.expand_path('../../data/test',__FILE__)
-  cal = Persistent::DiskStore.new(CALENDAR_FILE) 
-  cal.delete!
-rescue
-  #noop
 end
 
 RSpec.configure do |c|
@@ -24,6 +20,8 @@ RSpec.configure do |c|
   $last_output = ""
 end
 
+# Run rst in a system-command and redirect output to a tempfile
+# @return [String] - the content of the tempfile
 def true_run_shell(cmd)
   _rc = ""
   Tempfile.open('cmd') do |f|
@@ -34,7 +32,10 @@ def true_run_shell(cmd)
   _rc.strip
 end
 
-# not in use yet
+# Simulate system-call by parsing the params-string and
+# then initialize a new RstCommand. Capture stdout and stderr
+# run the command just as from a system-call
+# @return [String] - stdout and stderr concatenated
 def run_shell(cmd)
   if ENV['RUN_SHELL'] == 'TRUE'
     true_run_shell(cmd)
@@ -54,7 +55,7 @@ def run_shell(cmd)
   end
 end
 
-# Thank you Avdi Grimm for this Tapa
+# Inspired by an Avdi Grim Tapa
 def capture_stdout_and_stderr
   old_stdout = STDOUT.clone
   old_stderr = STDERR.clone
