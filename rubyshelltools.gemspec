@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.email       = 'andreas@altendorfer.at'
   s.files       = Dir['./*rb'] + Dir['lib/**/*.rb'] + Dir['bin/*']
   s.bindir      = 'bin'
+  s.license     = 'MIT'
   s.default_executable = 'rst'
   s.executables << 'rst'
   #s.add_dependency('somegem')
