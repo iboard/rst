@@ -20,8 +20,9 @@ RSpec.configure do |c|
   $last_output = ""
 end
 
-# Run rst in a system-command and redirect output to a tempfile
-# @return [String] - the content of the tempfile
+# run rst through command-execution
+# @param [String] cmd - The full command-line-params
+# @return [String]
 def true_run_shell(cmd)
   _rc = ""
   Tempfile.open('cmd') do |f|
@@ -32,10 +33,9 @@ def true_run_shell(cmd)
   _rc.strip
 end
 
-# Simulate system-call by parsing the params-string and
-# then initialize a new RstCommand. Capture stdout and stderr
-# run the command just as from a system-call
-# @return [String] - stdout and stderr concatenated
+# simulating a shell-call with a new RstCommand-instance
+# @param [String] cmd - The full command-line-params
+# @return [String]
 def run_shell(cmd)
   if ENV['RUN_SHELL'] == 'TRUE'
     true_run_shell(cmd)

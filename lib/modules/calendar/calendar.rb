@@ -40,8 +40,6 @@ module RST
   #
   module Calendar
 
-    include CalendarHelper
-
     # Calendar has a name and will be stored in Persistent::DiskStore(CALENDAR_FILE)
     # with it's name as the id. Thus you can save different calendars in
     # the same file. If no name is given 'unnamed' will be the default.
