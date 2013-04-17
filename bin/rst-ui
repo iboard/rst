@@ -40,6 +40,11 @@ class RSTCurses
     Curses.lines
   end
 
+  def clear
+    Curses.clear
+    status "q=Quit c=Calendar <enter>=Clear screen"
+  end
+
   private
   def init_curses
     Curses.noecho # do not show typed keys
@@ -77,8 +82,8 @@ end
 def display_calendar screen
   store = Persistent::DiskStore.new(CALENDAR_FILE)
   store.all.map { |calendar|
-      calendar.name + "\n" +
-        calendar.to_text('-2w','2w').to_s 
+    calendar.name + "\n" +
+    calendar.to_text('-2w','2w').to_s
   }.join("\n\n")
   .split(/\n/).each_with_index do |line,lno|
     screen.write(lno,0,line)
@@ -86,13 +91,17 @@ def display_calendar screen
   end
 end
 
+def show_colors(screen)
+  screen.clear
+end
+
 
 # MAIN
 RSTCurses.new.tap do |screen|
 
   screen.init_screen do
-    
-    screen.status "q=Quit c=Calendar l=ls"
+
+    screen.clear
 
     loop do
       case Curses.getch
@@ -101,7 +110,7 @@ RSTCurses.new.tap do |screen|
       when Curses::Key::RIGHT then screen.noop
       when Curses::Key::LEFT then screen.noop
       when ?c then display_calendar(screen)
-      when 10 then screen.noop #enter
+      when 10 then show_colors(screen)
       when ?q then break
       when ?r then screen.noop
       end
