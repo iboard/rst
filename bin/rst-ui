@@ -6,89 +6,15 @@ require_relative '../lib/rst'
 require_relative '../lib/load'
 include RST
 
-class RSTCurses
-
-  include Curses
-
-  COLORS = [ COLOR_BLACK,COLOR_RED,COLOR_GREEN,COLOR_YELLOW,COLOR_BLUE,
-             COLOR_MAGENTA,COLOR_CYAN,COLOR_WHITE ]
-
-  def init_screen
-    init_curses
-    yield
-  ensure
-    close_curses
-  end
-
-  def status(message)
-    message += '-' * (status_line_length - message.length)
-    write(status_line, 0, message, 1 )
-  end
-
-  def write(line, column, text, color_pair=@color_pairs.sample)
-    Curses.setpos(line, column)
-    Curses.attron(color_pair(color_pair)|A_NORMAL) do
-      Curses.addstr(text+ ' '*(status_line_length-column-text.length))
-    end
-  end
-
-  def noop
-    write(0,0,"NO OP AT #{Time.now.to_s}"+" "*5)
-  end
-
-  def height
-    Curses.lines
-  end
-
-  def clear
-    Curses.clear
-    status "q=Quit c=Calendar <enter>=Clear screen"
-  end
-
-  private
-  def init_curses
-    Curses.noecho # do not show typed keys
-    Curses.init_screen
-    Curses.start_color
-    @screen=Curses.stdscr
-    Curses.stdscr.keypad(true) # enable arrow keys
-    init_colors
-  end
-
-  def init_colors
-    @color_pairs = []
-    COLORS.each_with_index do |fg,fgi|
-      (COLORS-[fg]).each_with_index do |bg,bgi|
-        Curses.init_pair(fgi*10+bgi,fg,bg)
-        @color_pairs << fgi*10+bgi
-      end
-    end
-  end
-
-  def close_curses
-    Curses.close_screen
-  end
-
-  def status_line_length
-    Curses.cols
-  end
-
-  def status_line
-    Curses.lines-1
-  end
-
-end
 
 def display_calendar screen
   store = Persistent::DiskStore.new(CALENDAR_FILE)
-  store.all.map { |calendar|
-    calendar.name + "\n" +
-    calendar.to_text('-2w','2w').to_s
-  }.join("\n\n")
-  .split(/\n/).each_with_index do |line,lno|
-    screen.write(lno,0,line)
-    break if lno > screen.height-3
-  end
+  screen.print_screen( 
+    store.all.map { |calendar|
+      calendar.name + "\n" +
+      calendar.to_text('-2w','2w').to_s
+    }.join("\n\n").split(/\n/)
+  )
 end
 
 def show_colors(screen)
@@ -97,23 +23,18 @@ end
 
 
 # MAIN
-RSTCurses.new.tap do |screen|
+CursesController.new(ARGV).tap do |controller|
 
-  screen.init_screen do
-
-    screen.clear
-
-    loop do
-      case Curses.getch
-      when Curses::Key::UP then screen.noop
-      when Curses::Key::DOWN then screen.noop
-      when Curses::Key::RIGHT then screen.noop
-      when Curses::Key::LEFT then screen.noop
-      when ?c then display_calendar(screen)
-      when 10 then show_colors(screen)
-      when ?q then break
-      when ?r then screen.noop
-      end
+  loop do
+    case Curses.getch
+    when Curses::Key::UP then controller.noop
+    when Curses::Key::DOWN then controller.noop
+    when Curses::Key::RIGHT then controller.noop
+    when Curses::Key::LEFT then controller.noop
+    when ?c then display_calendar(controller)
+    when 10 then show_colors(controller)
+    when ?q then break
+    when ?r then controller.noop
     end
   end
 

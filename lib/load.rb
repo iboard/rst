@@ -27,6 +27,9 @@ unless defined? LIB_LOADED
   $LOAD_PATH.unshift(File.expand_path('../errors',__FILE__))
   require 'store_errors'
 
+  $LOAD_PATH.unshift(File.expand_path('../curses',__FILE__))
+  require 'curses_controller'
+
   $LOAD_PATH.unshift(File.expand_path('../modules/calendar',__FILE__))
   require 'calendar'
   require 'eventable'
