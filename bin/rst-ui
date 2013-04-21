@@ -6,36 +6,73 @@ require_relative '../lib/rst'
 require_relative '../lib/load'
 include RST
 
+# ACTIONS CALLED BY MAIN-LOOP
 
-def display_calendar screen
+def display_calendar screen,from,to
   store = Persistent::DiskStore.new(CALENDAR_FILE)
-  screen.print_screen( 
-    store.all.map { |calendar|
-      calendar.name + "\n" +
-      calendar.to_text('-2w','2w').to_s
-    }.join("\n\n").split(/\n/)
-  )
+  screen.clear
+  screen.print_screen( _print_calendar(store, from,to ))
+  screen.status( _print_status_line(from,to))
 end
 
-def show_colors(screen)
+def clear_screen(screen)
   screen.clear
+end
+
+def print_year(screen)
+  clear_screen(screen) 
+  screen.print_screen( _year_banner )
+  screen.status( "c=calender, q=quit" )
+end
+
+# HELPERS
+
+def _year_banner
+ [ '', '   RubyShellTools',"   #{VERSION}" ] +
+ `banner -w 32 #{Date.today.year}`.split(/\n/).map{|line|"    #{line}"} +
+ ['']*3
+end
+
+def _print_status_line(from,to)
+  "#{(Time.now+from.weeks).strftime('%Y-%m-%d')} " +
+  "to #{(Time.now+to.weeks).strftime('%Y-%m-%d')} " +
+  "[<up> -5w, <down> +5w, <c> today, <enter> clear]"
+end
+
+def _print_calendar(store, from, to)
+  store.all.map { |calendar|
+    calendar.name + "\n" +
+    calendar.to_text("#{from}w","#{to}w").to_s
+  }.join("\n\n").split(/\n/)
 end
 
 
 # MAIN
+
+# Initialize the controller
+# Loop getch until 'q' is received
+# Arrow-keys changes the range for from and to by months/years
+# Enter clears the screen (shows the current year as banner)
+# 'r' does nothing to demonstrate the noop function ;-)
+# 'q' quits the loop and ends the program.
+# Curses gets shut down when CoursesController gets dropped by the GC.
 CursesController.new(ARGV).tap do |controller|
+
+  from = -1 # show calendar from today -1 week
+  to   = 5  # show calendar to today + 5 weeks
 
   loop do
     case Curses.getch
-    when Curses::Key::UP then controller.noop
-    when Curses::Key::DOWN then controller.noop
-    when Curses::Key::RIGHT then controller.noop
-    when Curses::Key::LEFT then controller.noop
-    when ?c then display_calendar(controller)
-    when 10 then show_colors(controller)
-    when ?q then break
-    when ?r then controller.noop
+    when Curses::Key::UP    then from -=  4; to   -=  4; display_calendar(controller,from,to)
+    when Curses::Key::DOWN  then from +=  4; to   +=  4; display_calendar(controller,from,to)
+    when Curses::Key::LEFT  then from -= 52; to   -= 52; display_calendar(controller,from,to)
+    when Curses::Key::RIGHT then from += 52; to   += 52; display_calendar(controller,from,to)
+    when ?c                 then from = -1; to = 5; display_calendar(controller,from,to)
+    when 10                 then print_year(controller)  #ENTER
+    when ?r                 then clear_screen(controller); controller.noop
+    when ?q                 then break
     end
   end
 
 end
+

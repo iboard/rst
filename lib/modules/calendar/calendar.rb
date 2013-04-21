@@ -70,7 +70,7 @@ module RST
       # Return sorted events
       # @return [Array] of Event-objects
       def events
-        @_events.sort { |a,b| a.event_date <=> b.event_date }
+        (@_events||=[]).sort { |a,b| a.event_date <=> b.event_date }
       end
 
       # Remove events from calendar by event-ids
