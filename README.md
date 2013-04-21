@@ -11,7 +11,16 @@ name wasn't available at rubygems anymore ;-)
 
 Since bash-history isn't always enough persistent for my daily work, I deal with the idea to create a kinda 'central toolbox' for my shell. RST represents the first steps in this direction. I'm not sure if the 'project' will survive, tho. I'll give it a try.
 
-The first pushed version features a very simple 'ls' and 'calendar'-command. The plan is to play around with the structure of the gem until I'm satisfied and feel comfortable to start implementing more features. There's a ton of ideas what RST could do, I'm just not sure what it shall do. Let's see ...
+Current version features a very simple 'ls' and 'calendar'-command. 
+There is a command-line-version `bin/rst` and a Curses-version `bin/rst-ui`.
+A Sinatra-version will be added later.
+
+**Branches**
+
+* _master_ - core and command-line version
+* _curses_ - core, command-line, and Curses implementation
+
+The plan is to play around with the structure of the gem until I'm satisfied and feel comfortable to start implementing more features. There's a ton of ideas what RST could do, I'm just not sure what it shall do. Let's see ...
 
 
 Install from rubygems.org
