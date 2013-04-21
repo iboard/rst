@@ -3,6 +3,12 @@ require 'curses'
 module RST
 
   # Controll the curses-lib
+  # @example
+  #   cc = CursesController.new
+  #   cc.print_scren( ['Line 1', 'Line 2', ...] )
+  #   cc.clear
+  #   cc.status 'It works'
+  #
   class CursesController
 
     include Curses
@@ -51,6 +57,8 @@ module RST
       Curses.clear
       status "q=Quit c=Calendar <enter>=Clear screen"
     end
+
+    #@endgroup
 
     private
 

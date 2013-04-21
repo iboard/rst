@@ -7,6 +7,8 @@ Environment
   ✔ Mock/Stub system-requests
     - rake [:test] - mocks system-calls (fast)
     - rake with_syscalls - does real system-calls (slower)
+  ✔ Implement a Curses-interface
+    - bin/rst-ui
  
 
 
