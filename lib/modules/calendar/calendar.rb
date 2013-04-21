@@ -53,7 +53,7 @@ module RST
 
       # @group public API
 
-      attr_reader :name, :start_date, :end_date, :events
+      attr_reader :name, :start_date, :end_date
 
       # @param [String] _name Name and persistent-id of this calendar.
       # @param [Date|Time|String] _start The date when the calendar starts
@@ -64,7 +64,21 @@ module RST
         @name       = _name
         @start_date = parse_date_param(_start)
         @end_date   = parse_date_param(_end)
-        @events     = _events
+        @_events     = _events
+      end
+
+      # Return sorted events
+      # @return [Array] of Event-objects
+      def events
+        @_events.sort { |a,b| a.event_date <=> b.event_date }
+      end
+
+      # Remove events from calendar by event-ids
+      # @param [Array] ids - ids to remove
+      def reject_events_by_id!(*ids)
+        @_events.reject! do |e|
+          ids.include?(e.id)
+        end
       end
 
 
@@ -90,7 +104,7 @@ module RST
       # Add Eventables to the calendar
       # @param [Eventable] add - the Object to add
       def <<(add)
-        events << add 
+        @_events << add 
       end
 
       # Calculate the span between start and end in seconds

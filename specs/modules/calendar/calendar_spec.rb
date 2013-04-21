@@ -87,6 +87,26 @@ describe 'Calendar module:' do
       .gsub(/^           /,'').strip
     end
 
+    it 'should ouput events sorted by date' do
+      cal = Calendar::Calendar.new('Formatted','1.4.2013', '30.4.2013')
+      ev1 = Calendar::CalendarEvent.new('1.4.2013','Event 1')
+      ev2 = Calendar::CalendarEvent.new('20.4.2013','Event 2')
+      cal << ev2
+      cal << ev1
+      cal.events.should == [ ev1, ev2 ]
+    end
+
+    it '.reject_events_by_id!(IDs,..) should remove events from calendar' do
+      cal = Calendar::Calendar.new('Formatted','1.4.2013', '30.4.2013')
+      ev1 = Calendar::CalendarEvent.new('1.4.2013','Event 1')
+      ev2 = Calendar::CalendarEvent.new('20.4.2013','Event 2')
+      cal << ev2
+      cal << ev1
+      cal.events.should == [ ev1, ev2 ]
+      cal.reject_events_by_id!( ev1.id, ev2.id  )
+      cal.events.should == [ ]
+    end
+
   end
 
   describe 'Eventable module' do

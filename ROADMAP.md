@@ -4,11 +4,11 @@ Ruby Shell Tools - Road-map
 Environment
 -----------
 
-  ✔ Mock/Stub system-requests
-    - rake [:test] - mocks system-calls (fast)
-    - rake with_syscalls - does real system-calls (slower)
-  ✔ Implement a Curses-interface
-    - bin/rst-ui
+      ✔ Mock/Stub system-requests
+        - rake [:test] - mocks system-calls (fast)
+        - rake with_syscalls - does real system-calls (slower)
+      ✔ Implement a Curses-interface
+        - bin/rst-ui
  
 
 
@@ -40,4 +40,11 @@ Review args for calendar
         rst note --id ID --email EMAIL should send the note as email
         rst note --id ID --edit .... should open note in $editor
 
-        
+UI (Curses) features        
+--------------------
+
+  - Walk through dates with arrow-keys
+  - Set from and to through the interface
+  - enter a new event
+  - delete an event
+  - modify an event

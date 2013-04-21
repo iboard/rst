@@ -338,7 +338,7 @@ module RST
     def delete_events
       store = Persistent::DiskStore.new(CALENDAR_FILE)
       calendar = store.find(@options[:name])
-      calendar.events.reject!{|r| @options[:delete_events].include?(r.id)}
+      calendar.reject_events_by_id!(*@options[:delete_events])
       store << calendar
     end
 
