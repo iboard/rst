@@ -29,19 +29,22 @@ module RST
 
       # @return [String] full path of PStore-file
       def path
-        @store.path
+        store.path
       end
+
+      # @
 
       # @todo This is bad for performance and memory - refactor!
       # @return [Array]
       def all
-        _all = []
-        @store.transaction(true) do |s|
+        return @all if @all
+        @all = []
+        store.transaction(true) do |s|
           s.roots.each do |_r|
-            _all << s[_r]
+            @all << s[_r]
           end
         end
-        _all
+        @all
       end
 
       # Delete the store
@@ -52,7 +55,8 @@ module RST
       # Find and update or add object to the store.
       # @param [Object] object
       def update(object)
-        @store.transaction do |s|
+        @all = nil
+        store.transaction do |s|
           s[object.id] = object
         end
       end
@@ -61,15 +65,21 @@ module RST
 
       # @param [Object] object - the object to be removed.
       def remove_object(object)
-        @store.transaction do |s|
+        store.transaction do |s|
           s.delete(object.id)
         end
+        @all = nil
       end
 
       # Initialize a PStore-instance
       # @see store_path
       def setup_backend
-        @store = PStore.new(store_path)
+        @_store = PStore.new(store_path)
+      end
+
+      # store-accessor
+      def store
+        @_store ||= setup_backend
       end
 
 
@@ -86,7 +96,7 @@ module RST
       # @see STOREPATH
       # @return [String] 
       def store_path
-        @store_path ||= build_store_path
+        store_path ||= build_store_path
       end
 
       # build the path from ENV-vars and create the directory

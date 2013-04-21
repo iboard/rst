@@ -183,6 +183,26 @@ describe Persistent do
       @store.all.count.should == 1
       @store.find('1')[:name].should == 'SoftStore'
     end
+
+    describe '.all caches the result without hitting the disc again' do
+      class FakeData < Struct.new(:a)
+        include Persistent::Persistentable
+      end
+      before do
+        @store = Persistent::DiskStore.new('dummy.data')
+        @data_a = FakeData.new(1)
+        @data_b = FakeData.new(2)
+        @store << @data_a
+        @store << @data_b
+        @_store = @store.send(:store)
+        @_store.stub(:roots).and_return [@data_a.id,@data_b.id]
+      end
+      it 'should hit the pstore the first time' do
+        @_store.should_receive(:roots).once
+        @store.all.should == [@data_a,@data_b]
+        @store.all.should == [@data_a,@data_b]
+      end
+    end
   end
 
   describe 'Persistentable' do
