@@ -134,6 +134,16 @@ persistent.
       cal = find_calendar( Persistent::DiskStore.new(CALENDAR_FILE) )
       cal.list_days(options[:from], options[:to], options[:show_empty]).compact.join("\n")
   
+Curses-interface
+----------------
+
+`bin/rst-ui` is a Curses-program to display the calendar for -1 to +5 weeks
+from today. You can walk around by weeks and years, using arrow-keys.
+And you can display a nice 'banner' for the current year (clear the
+calendar-screen)
+
+`rst-ui` uses `CursesController` which handles the curses-implementation
+nothing has to change in our module's source.
 
 
 TDD
