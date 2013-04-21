@@ -5,7 +5,6 @@ include RST
 describe RST::CursesController do
 
   before do
-    Curses = mock(Curses)
     std_scr = mock( 'StdScreenMock' )
     std_scr.stub! :keypad
     %i(noecho init_screen close_screen init_pair attron setpos 
