@@ -32,19 +32,10 @@ module RST
         store.path
       end
 
-      # @
-
       # @todo This is bad for performance and memory - refactor!
       # @return [Array]
       def all
-        return @all if @all
-        @all = []
-        store.transaction(true) do |s|
-          s.roots.each do |_r|
-            @all << s[_r]
-          end
-        end
-        @all
+        @all ||= collect_all_entries
       end
 
       # Delete the store
@@ -110,6 +101,17 @@ module RST
         File.join(_dir, filename)
       end
 
+      # collect all root-entires
+      # @return [Array] - root-entries
+      def collect_all_entries
+        @all = []
+        store.transaction(true) do |s|
+          s.roots.each do |_r|
+            @all << s[_r]
+          end
+        end
+        @all
+      end
     end
 
   end
