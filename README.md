@@ -15,11 +15,6 @@ Current version features a very simple 'ls' and 'calendar'-command.
 There is a command-line-version `bin/rst` and a Curses-version `bin/rst-ui`.
 A Sinatra-version will be added later.
 
-**Branches**
-
-* _master_ - core and command-line version
-* _curses_ - core, command-line, and Curses implementation
-
 The plan is to play around with the structure of the gem until I'm satisfied and feel comfortable to start implementing more features. There's a ton of ideas what RST could do, I'm just not sure what it shall do. Let's see ...
 
 

@@ -32,7 +32,6 @@ module RST
         store.path
       end
 
-      # @todo This is bad for performance and memory - refactor!
       # @return [Array]
       def all
         @all ||= collect_all_entries
@@ -56,10 +55,10 @@ module RST
 
       # @param [Object] object - the object to be removed.
       def remove_object(object)
+        @all = nil
         store.transaction do |s|
           s.delete(object.id)
         end
-        @all = nil
       end
 
       # Initialize a PStore-instance
