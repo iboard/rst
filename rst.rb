@@ -19,7 +19,7 @@ module RST
   # @see Calendar::Eventable.id
   EVENT_HEX_ID_LENGTH = 4
 
-  # intialize the logger
+  # initialize the logger
   # @example Usage
   #   RST.logger.info('This will output to STDERR')
   def logger

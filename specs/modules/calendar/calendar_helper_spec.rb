@@ -20,8 +20,8 @@ describe CalendarHelper do
     end
 
     it 'interprets [-]1m' do
-      parse_date_param('1m').month.should == (@today+31).month
-      parse_date_param('-1m').month.should == (@today-31).month
+      parse_date_param('1m').month.should == (@today+30.45).month
+      parse_date_param('-1m').month.should == (@today-30.45).month
     end
 
     it 'interprets \'today\'' do

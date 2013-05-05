@@ -1,12 +1,12 @@
+require 'simplecov'
+SimpleCov.start
+
 require 'rst'
 require 'tempfile'
 require 'stringio'
 
 ENV['RST_ENV'] = 'test'
 ENV['RST_DATA'] = File.expand_path('../../data',__FILE__)
-
-require 'simplecov'
-SimpleCov.start
 
 require File.expand_path('../../lib/load',__FILE__)
 
