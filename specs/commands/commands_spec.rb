@@ -89,21 +89,56 @@ describe 'Command-line arguments' do
     got.should =~ /#{Date.today.strftime(DEFAULT_DATE_FORMAT)}:\n        ([a-f0-9]{8}): Testentry/
   end
 
-  it '--delete-events ID[,ID,ID,...] - should remove events from calendar' do
-    clear_data_path
-    store = Persistent::DiskStore.new(CALENDAR_FILE)
-    calendar = Calendar::Calendar.new('testcal')
-    event1 = Calendar::CalendarEvent.new( Date.today, 'Testentry0')
-    event2 = Calendar::CalendarEvent.new( Date.today, 'Testentry1')
-    calendar << event1
-    calendar << event2
-    store << calendar
-    run_shell("bin/rst cal -n testcal --delete-events=#{event1.id}")
-    calendar = store.find('testcal')
-    calendar.events.map(&:label).should include('Testentry1')
-    calendar.events.map(&:label).should_not include('Testentry0')
-  end
+  describe 'with two samples' do
 
+    before do
+      _today = '2013-05-05'
+      clear_data_path
+      @store = Persistent::DiskStore.new(CALENDAR_FILE)
+      calendar = Calendar::Calendar.new('testcal')
+      @event1 = Calendar::CalendarEvent.new( _today, 'Testentry0')
+      @event2 = Calendar::CalendarEvent.new( _today, 'Testentry1')
+      calendar << @event1
+      calendar << @event2
+      @store << calendar
+    end
+
+    it '--delete-events ID[,ID,ID,...] - should remove events from calendar' do
+      run_shell("bin/rst cal -n testcal --delete-events=#{@event1.id}")
+      calendar = @store.find('testcal')
+      calendar.events.map(&:label).should include('Testentry1')
+      calendar.events.map(&:label).should_not include('Testentry0')
+    end
+
+    it '--dump dumps a calendar' do
+      got = run_shell('bin/rst -n testcal --dump').strip
+      got.should == "\"#{today(:short)},Testentry0\"\n\"#{today(:short)},Testentry1\""
+    end
+
+    it '--print-calendar outputs a well formatted calendar' do
+      got = run_shell('bin/rst cal -n testcal --print-calendar').strip
+      _expected = <<-EOT
+       testcal
+             May 2013         EVENTS:
+       Su Mo Tu We Th Fr Sa   Sun, May 05 2013: Testentry0 + Testentry1
+                 1  2  3  4
+        5  6  7  8  9 10 11
+       12 13 14 15 16 17 18
+       19 20 21 22 23 24 25
+       26 27 28 29 30 31
+      EOT
+      .gsub(/^       /,'').strip
+      got.should == _expected
+    end
+
+    it '--clear-defaults clears default settings' do
+      save = run_shell('bin/rst -f 1900-01-01 -t 1901-01-01 --save-defaults')
+      clear= run_shell('bin/rst --clear-defaults')
+      save.strip.should =~ /Defaults saved/
+      clear.strip.should == "1"
+    end
+
+  end
 
   it '--save-defaults - should save current options as defaults' do
     got = run_shell('bin/rst cal --no-empty -n unnamed --from 1.1.2013 --to 31.1.2013 --save-defaults')
@@ -124,4 +159,13 @@ describe 'Command-line arguments' do
     run_shell("bin/rst ls").should =~ /Gemfile/
   end
 
+  it 'doesn\'t thorw exectption on unknown command' do
+    got = run_shell 'bin/rst undefined_command'
+    got.should == ''
+  end
+
+  it 'doesn\'t throw exection on unknown options' do
+    got = run_shell 'bin/rst nil --unknown-option'
+    got.should =~ /invalid option: --unknown-option/
+  end
 end

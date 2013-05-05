@@ -15,6 +15,11 @@ def clear_data_path
   system 'rm', '-rf', File.expand_path('../../data/test',__FILE__)
 end
 
+def today format=:default
+  _format = format == :default ? DEFAULT_DATE_FORMAT : '%Y-%m-%d'
+  Date.today.strftime(_format)
+end
+
 RSpec.configure do |c|
   clear_data_path
   $last_output = ""
