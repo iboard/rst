@@ -112,11 +112,11 @@ describe 'Command-line arguments' do
 
     it '--dump dumps a calendar' do
       got = run_shell('bin/rst -n testcal --dump').strip
-      got.should == "\"#{today(:short)},Testentry0\"\n\"#{today(:short)},Testentry1\""
+      got.should == "\"2013-05-05,Testentry0\"\n\"2013-05-05,Testentry1\""
     end
 
     it '--print-calendar outputs a well formatted calendar' do
-      got = run_shell('bin/rst cal -n testcal --print-calendar').strip
+      got = run_shell('bin/rst cal -n testcal -f 2013-05-05 -t 2013-05-05 --print-calendar').strip
       _expected = <<-EOT
        testcal
              May 2013         EVENTS:
